@@ -6,9 +6,11 @@ from functools import partial
 
 EVENT_POSITON_CHANGED = 1
 
+
 class GameObject:
-    def __init__(self, game, x = 0, y = 0, w = 0, h = 0):
+    def __init__(self, game, scene, x = 0, y = 0, w = 0, h = 0):
         self.game = game
+        self.scene = scene
         self.position = [x, y]
         self.width = w
         self.height = h
@@ -56,6 +58,7 @@ class GameObject:
         if(self.pygame_object):
             surface.blit(self.pygame_object, self.position)
 
+
 class Tween:
     def __init__(self, game, tween_from, tween_to, tween_duration, auto):
         self.game = game
@@ -83,18 +86,20 @@ class Tween:
             print("Tween done")
             self.done = True
 
+
 class StaticObject(GameObject):
-    def __init__(self, game, sprite, x, y, w, h):
-        GameObject.__init__(self, game, x, y, w, h)
+    def __init__(self, game, scene, sprite, x, y, w, h):
+        GameObject.__init__(self, game, scene, x, y, w, h)
         go = pygame.image.load(sprite)
         self.pygame_object = pygame.transform.smoothscale(go, (int(w), int(h)))
 
     def draw(self, surface):
         surface.blit(self.pygame_object, self.position)
 
+
 class Text(GameObject):
-    def __init__(self, game, text, color = (255, 255, 255)):
-        GameObject.__init__(self, game)
+    def __init__(self, game, scene, text, color = (255, 255, 255)):
+        GameObject.__init__(self, game, scene)
         self.font = pygame.font.Font(None, 36)
         self.color = color
         self.text = text
@@ -108,9 +113,10 @@ class Text(GameObject):
         screen = self.game.get_screen()
         self.rect.centerx = screen.get_rect().centerx
 
+
 class PhysicsObject(GameObject):
-    def __init__(self, game, x, y, w, h, speed):
-        GameObject.__init__(self, game, x, y, w, h)
+    def __init__(self, game, scene, x, y, w, h, speed):
+        GameObject.__init__(self, game, scene, x, y, w, h)
         self.speed = speed
 
     def update(self, dt):
@@ -118,9 +124,10 @@ class PhysicsObject(GameObject):
         self.position[1] += self.speed[1] * dt
         #print("New POS ", self.position)
 
+
 class Cell(GameObject):
-    def __init__(self, game, color, x, y, width, height):
-        GameObject.__init__(self, game, x, y, width, height)
+    def __init__(self, game, scene, color, x, y, width, height):
+        GameObject.__init__(self, game, scene, x, y, width, height)
         self.color = color
 
     def move_to(self, x, y):
@@ -129,15 +136,17 @@ class Cell(GameObject):
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.bounds)
 
+
 class Food(StaticObject):
-    def __init__(self, game, ix, iy):
+    def __init__(self, game, scene, ix, iy):
         self.index_x = ix
         self.index_y = iy
-        cw = game.cell_width
-        ch = game.cell_height
-        x = ix * game.cell_width
-        y = iy * game.cell_height
-        StaticObject.__init__(self, game, "assets/food.png", x, y, game.cell_width, game.cell_height)
+        cw = scene.cell_width
+        ch = scene.cell_height
+        x = ix * scene.cell_width
+        y = iy * scene.cell_height
+        StaticObject.__init__(self, game, scene, "assets/food.png", x, y, scene.cell_width, scene.cell_height)
+
 
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
@@ -149,8 +158,10 @@ YELLOW = 255, 255, 0
 GREY = 128, 128, 128
 STEEL = 224, 223, 219
 
+
 def getRandomColor(colors):
     return colors[random.randint(0, len(colors)-1)]
+
 
 DIRECTION_LEFT = 1
 DIRECTION_RIGHT = 2
@@ -161,14 +172,12 @@ USER_TIMER = pygame.NOEVENT + 1
 
 
 class Snake(GameObject):
-    def __init__(self, game, color, ix, iy):
+    def __init__(self, game, scene, color, ix, iy):
         self.index_x = ix
         self.index_y = iy
-        cw = game.cell_width
-        ch = game.cell_height
-        x = ix * game.cell_width
-        y = iy * game.cell_height
-        GameObject.__init__(self, game, x, y, game.cell_width, game.cell_height)
+        x = ix * scene.cell_width
+        y = iy * scene.cell_height
+        GameObject.__init__(self, game, scene, x, y, scene.cell_width, scene.cell_height)
         self.color = color
         self.direction = DIRECTION_RIGHT
         self.speed = 50
@@ -267,7 +276,7 @@ class GameScene(Scene):
             next_x = self.border_width
             for x in range(self.columns):
                 print("CELL {},{} at {},{}".format(y, x, next_x, next_y))
-                cell = Cell(self, STEEL, next_x, next_y, self.cell_width, self.cell_height)
+                cell = Cell(self.game, self, STEEL, next_x, next_y, self.cell_width, self.cell_height)
                 self.game_objects.append(cell)
                 next_x += self.cell_width
             next_y += self.cell_height
@@ -276,7 +285,7 @@ class GameScene(Scene):
             x = random.randint(0, self.rows-1)
             y = random.randint(0, self.columns-1)
             print("FOOD {} at {},{}".format(i, x, y))
-            food = Food(self, x, y)
+            food = Food(self.game, self, x, y)
             self.food.append(food)
             self.game_objects.append(food)
         # setup snake next
@@ -286,7 +295,7 @@ class GameScene(Scene):
         snake_x = random.randint(0, self.rows - 1)
         snake_y = random.randint(0, self.columns - 1)
         print("Snake at {},{}".format(snake_x, snake_y))
-        snake = Snake(self, YELLOW, snake_x, snake_y)
+        snake = Snake(self.game, self, YELLOW, snake_x, snake_y)
         return snake
 
     def resetPlayer(self):
