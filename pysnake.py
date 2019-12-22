@@ -125,77 +125,6 @@ class PhysicsObject(GameObject):
         #print("New POS ", self.position)
 
 
-class Cell(GameObject):
-    def __init__(self, game, scene, color, x, y, width, height):
-        GameObject.__init__(self, game, scene, x, y, width, height)
-        self.color = color
-
-    def move_to(self, x, y):
-        print("*E: unexpected cell:moveto")
-
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.bounds)
-
-
-class Food(StaticObject):
-    def __init__(self, game, scene, ix, iy):
-        self.index_x = ix
-        self.index_y = iy
-        cw = scene.cell_width
-        ch = scene.cell_height
-        x = ix * scene.cell_width
-        y = iy * scene.cell_height
-        StaticObject.__init__(self, game, scene, "assets/food.png", x, y, scene.cell_width, scene.cell_height)
-
-
-BLACK = 0, 0, 0
-WHITE = 255, 255, 255
-RED = 255, 0, 0
-GREEN = 0, 255, 0
-BLUE = 0, 0, 255
-ORANGE = 255, 165, 0
-YELLOW = 255, 255, 0
-GREY = 128, 128, 128
-STEEL = 224, 223, 219
-
-
-def getRandomColor(colors):
-    return colors[random.randint(0, len(colors)-1)]
-
-
-DIRECTION_LEFT = 1
-DIRECTION_RIGHT = 2
-DIRECTION_UP = 3
-DIRECTION_DOWN = 4
-
-USER_TIMER = pygame.NOEVENT + 1
-
-
-class Snake(GameObject):
-    def __init__(self, game, scene, color, ix, iy):
-        self.index_x = ix
-        self.index_y = iy
-        x = ix * scene.cell_width
-        y = iy * scene.cell_height
-        GameObject.__init__(self, game, scene, x, y, scene.cell_width, scene.cell_height)
-        self.color = color
-        self.direction = DIRECTION_RIGHT
-        self.speed = 50
-
-    def draw(self, surface):
-        #print(self.bounds)
-        pygame.draw.rect(surface, self.color, self.bounds)
-
-    def update(self, dt):
-        dx = dy = 0
-        if self.direction == DIRECTION_RIGHT:
-            dx = self.speed * dt
-        self.position[0] += dx
-        self.position[1] += dy
-        self.update_bounds()
-        self.raise_event(EVENT_POSITON_CHANGED)
-
-
 class GameState:
     def __init__(self):
         self.lives = 50
@@ -243,6 +172,73 @@ class Scene:
         self.remove_stack.clear()
 
 
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
+RED = 255, 0, 0
+GREEN = 0, 255, 0
+BLUE = 0, 0, 255
+ORANGE = 255, 165, 0
+YELLOW = 255, 255, 0
+GREY = 128, 128, 128
+STEEL = 224, 223, 219
+
+
+def getRandomColor(colors):
+    return colors[random.randint(0, len(colors)-1)]
+
+
+DIRECTION_LEFT = 1
+DIRECTION_RIGHT = 2
+DIRECTION_UP = 3
+DIRECTION_DOWN = 4
+
+USER_TIMER = pygame.NOEVENT + 1
+
+
+class Cell(GameObject):
+    def __init__(self, game, scene, color, x, y, width, height):
+        GameObject.__init__(self, game, scene, x, y, width, height)
+        self.color = color
+
+    def move_to(self, x, y):
+        print("*E: unexpected cell:moveto")
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.bounds)
+
+
+class Food(StaticObject):
+    def __init__(self, game, scene, row, column):
+        self.row = row
+        self.column = column
+        bounds = scene.cell_bounds(row, column)
+        StaticObject.__init__(self, game, scene, "assets/food.png", bounds.left, bounds.top, bounds.width, bounds.height)
+
+
+class Snake(GameObject):
+    def __init__(self, game, scene, color, row, column):
+        self.row = row
+        self.column = column
+        bounds = scene.cell_bounds(row, column)
+        GameObject.__init__(self, game, scene, bounds.left, bounds.top, bounds.width, bounds.height)
+        self.color = color
+        self.direction = DIRECTION_RIGHT
+        self.speed = 25
+
+    def draw(self, surface):
+        #print(self.bounds)
+        pygame.draw.rect(surface, self.color, self.bounds)
+
+    def update(self, dt):
+        dx = dy = 0
+        if self.direction == DIRECTION_RIGHT:
+            dx = self.speed * dt
+        self.position[0] += dx
+        self.position[1] += dy
+        self.update_bounds()
+        self.raise_event(EVENT_POSITON_CHANGED)
+
+
 CELL_WIDTH = 64
 CELL_HEIGHT = 64
 BORDER_WIDTH = 32
@@ -258,6 +254,13 @@ class GameScene(Scene):
         self.build_level()
         #self.debug = Text(self, "PySnake")
         #self.game_objects.append(self.debug)
+
+    def cell_bounds(self, row, col):
+        x = col * self.cell_width
+        y = row * self.cell_height
+        x = x + self.border_width
+        y = y + self.border_height
+        return pygame.Rect(x, y, self.cell_width, self.cell_height)
 
     def build_level(self):
         # setup cells first
@@ -275,17 +278,17 @@ class GameScene(Scene):
         for y in range(self.rows):
             next_x = self.border_width
             for x in range(self.columns):
-                print("CELL {},{} at {},{}".format(y, x, next_x, next_y))
+                #print("CELL {},{} at {},{}".format(y, x, next_x, next_y))
                 cell = Cell(self.game, self, STEEL, next_x, next_y, self.cell_width, self.cell_height)
                 self.game_objects.append(cell)
                 next_x += self.cell_width
             next_y += self.cell_height
         # setup food items
         for i in range(10):
-            x = random.randint(0, self.rows-1)
-            y = random.randint(0, self.columns-1)
-            print("FOOD {} at {},{}".format(i, x, y))
-            food = Food(self.game, self, x, y)
+            row = random.randint(0, self.rows-1)
+            column = random.randint(0, self.columns-1)
+            print("FOOD {} at {},{}".format(i, row, column))
+            food = Food(self.game, self, row, column)
             self.food.append(food)
             self.game_objects.append(food)
         # setup snake next
@@ -336,16 +339,16 @@ class GameScene(Scene):
     def doDeathCheck(self, source):
         dead = False
         source_bounds = source.get_bounds()
-        if source_bounds.x <= 0:
+        if source_bounds.x <= self.border_width:
             print("HIT left wall!")
             dead = True
-        elif source_bounds.x > self.size[0] - self.cell_width:
+        elif source_bounds.x > self.size[0] - self.cell_width - self.border_width:
             print("HIT right wall!")
             dead = True
-        elif source_bounds.y <= 0:
+        elif source_bounds.y <= self.border_height:
             print("HIT top wall!")
             dead = True
-        elif source_bounds.y > self.size[1] - self.cell_height:
+        elif source_bounds.y > self.size[1] - self.cell_height - self.border_height:
             print("HIT bottom wall!")
             dead = True
         if(dead):
