@@ -1,10 +1,40 @@
 import sys
-import math
+import json
 import pygame
 import random
 from functools import partial
 
-EVENT_POSITON_CHANGED = 1
+
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
+RED = 255, 0, 0
+GREEN = 0, 255, 0
+BLUE = 0, 0, 255
+ORANGE = 255, 165, 0
+YELLOW = 255, 255, 0
+GREY = 128, 128, 128
+STEEL = 224, 223, 219
+
+
+DIRECTION_LEFT = 1
+DIRECTION_RIGHT = 2
+DIRECTION_UP = 3
+DIRECTION_DOWN = 4
+
+USER_TIMER = pygame.NOEVENT + 1
+EVENT_POSITION_CHANGED = 1
+
+
+# global functions
+def parse_position(_position):
+    _coords = _position.split(',')
+    x = int(_coords[0])
+    y = int(_coords[1])
+    return [x, y]
+
+
+def getRandomColor(colors):
+    return colors[random.randint(0, len(colors)-1)]
 
 
 class GameObject:
@@ -24,6 +54,9 @@ class GameObject:
 
     def get_bounds(self):
         return self.bounds
+
+    def load_props(self, props):
+        pass
 
     def update_bounds(self):
         self.bounds = pygame.Rect(self.position[0], self.position[1], self.width, self.height)
@@ -56,7 +89,7 @@ class GameObject:
 
     def draw(self, surface):
         if(self.pygame_object):
-            surface.blit(self.pygame_object, self.position)
+            surface.blit(self.pygame_object, self.bounds)
 
 
 class Tween:
@@ -94,7 +127,8 @@ class StaticObject(GameObject):
         self.pygame_object = pygame.transform.smoothscale(go, (int(w), int(h)))
 
     def draw(self, surface):
-        surface.blit(self.pygame_object, self.position)
+        #pygame.draw.rect(surface, BLACK, self.bounds)
+        GameObject.draw(self, surface)
 
 
 class Text(GameObject):
@@ -127,9 +161,11 @@ class PhysicsObject(GameObject):
 
 class GameState:
     def __init__(self):
-        self.lives = 50
+        self.lives = 3
+        self.score = 0
         self.scene = None
         self.paused = False
+        self.won = False
         self.gameover = False
 
 
@@ -172,72 +208,48 @@ class Scene:
         self.remove_stack.clear()
 
 
-BLACK = 0, 0, 0
-WHITE = 255, 255, 255
-RED = 255, 0, 0
-GREEN = 0, 255, 0
-BLUE = 0, 0, 255
-ORANGE = 255, 165, 0
-YELLOW = 255, 255, 0
-GREY = 128, 128, 128
-STEEL = 224, 223, 219
-
-
-def getRandomColor(colors):
-    return colors[random.randint(0, len(colors)-1)]
-
-
-DIRECTION_LEFT = 1
-DIRECTION_RIGHT = 2
-DIRECTION_UP = 3
-DIRECTION_DOWN = 4
-
-USER_TIMER = pygame.NOEVENT + 1
-
-
-class Cell(GameObject):
-    def __init__(self, game, scene, color, x, y, width, height):
-        GameObject.__init__(self, game, scene, x, y, width, height)
-        self.color = color
-
-    def move_to(self, x, y):
-        print("*E: unexpected cell:moveto")
-
-    def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.bounds)
-
-
 class Food(StaticObject):
-    def __init__(self, game, scene, row, column):
-        self.row = row
-        self.column = column
-        bounds = scene.cell_bounds(row, column)
-        StaticObject.__init__(self, game, scene, "assets/food.png", bounds.left, bounds.top, bounds.width, bounds.height)
+    def __init__(self, game, scene, props):
+        [x, y] = parse_position(props['position'])
+        print("FOOD at {},{}".format(x, y))
+        StaticObject.__init__(self, game, scene, "assets/food.png", x, y, CELL_WIDTH, CELL_HEIGHT)
+        self.score = int(props['score'])
+
+    def get_score(self):
+        return self.score
 
 
 class Snake(GameObject):
-    def __init__(self, game, scene, color, row, column):
-        self.row = row
-        self.column = column
-        bounds = scene.cell_bounds(row, column)
-        GameObject.__init__(self, game, scene, bounds.left, bounds.top, bounds.width, bounds.height)
+    def __init__(self, game, scene, color, x, y, w, h):
+        GameObject.__init__(self, game, scene, x, y, w, h)
         self.color = color
-        self.direction = DIRECTION_RIGHT
-        self.speed = 25
+        self.direction = DIRECTION_UP
+        self.speed = 50
 
     def draw(self, surface):
         #print(self.bounds)
         pygame.draw.rect(surface, self.color, self.bounds)
 
+    def set_direction(self, direction):
+        self.direction = direction
+
     def update(self, dt):
         dx = dy = 0
         if self.direction == DIRECTION_RIGHT:
             dx = self.speed * dt
-        self.position[0] += dx
-        self.position[1] += dy
+        if self.direction == DIRECTION_LEFT:
+            dx = -self.speed * dt
+        if self.direction == DIRECTION_DOWN:
+            dy = self.speed * dt
+        if self.direction == DIRECTION_UP:
+            dy = -self.speed * dt
+        x = self.position[0]
+        x += dx
+        y = self.position[1]
+        y += dy
+        self.position = self.scene.clamp_object_position(x, y)
         self.update_bounds()
-        self.raise_event(EVENT_POSITON_CHANGED)
-
+        self.raise_event(EVENT_POSITION_CHANGED)
 
 CELL_WIDTH = 64
 CELL_HEIGHT = 64
@@ -249,66 +261,50 @@ class GameScene(Scene):
     def __init__(self, game):
         Scene.__init__(self, game)
         self.snake = None
-        self.cells = []
-        self.food = []
-        self.build_level()
+        self.food_objects = []
+        #self.build_level()
+        self.load_level('assets/level01.json')
         #self.debug = Text(self, "PySnake")
         #self.game_objects.append(self.debug)
 
-    def cell_bounds(self, row, col):
-        x = col * self.cell_width
-        y = row * self.cell_height
-        x = x + self.border_width
-        y = y + self.border_height
-        return pygame.Rect(x, y, self.cell_width, self.cell_height)
+    def get_random_position(self):
+        x = random.randint(self.bounds.left, self.bounds.right - CELL_WIDTH)
+        y = random.randint(self.bounds.top, self.bounds.bottom - CELL_HEIGHT)
+        return [x, y]
 
-    def build_level(self):
-        # setup cells first
-        self.cell_width = CELL_WIDTH
-        self.cell_height = CELL_HEIGHT
-        self.rows = int(math.floor((self.size[1] - BORDER_HEIGHT * 2) / self.cell_height))
-        self.columns = int(math.floor((self.size[0] - BORDER_WIDTH * 2) / self.cell_width))
-        self.border_height = int((self.size[1] - self.rows * self.cell_height) / 2)
-        self.border_width = int((self.size[0] - self.columns * self.cell_width) / 2)
+    def load_level(self, file):
+        # XXX get this from file???
+        self.bounds = pygame.Rect(BORDER_WIDTH, BORDER_HEIGHT, self.size[0] - BORDER_WIDTH,
+                                  self.size[1] - BORDER_HEIGHT)
+        with open(file) as level_file:
+            _level = json.load(level_file)
+            # setup snake next
+            _snake = _level['snake']
+            [x, y] = parse_position(_snake['position'])
+            self.resetPlayer(x, y)
+            _food_nodes = _level['food_items']
+            for node in _food_nodes:
+                food = Food(self.game, self, node)
+                self.food_objects.append(food)
+                self.game_objects.append(food)
 
-        print("Cell DIMS {}x{}".format(self.cell_width, self.cell_height))
-        print("Border DIMS {}x{}".format(self.border_width, self.border_height))
-        print("Level DIMS {}x{}".format(self.rows, self.columns))
-        next_y = self.border_height
-        for y in range(self.rows):
-            next_x = self.border_width
-            for x in range(self.columns):
-                #print("CELL {},{} at {},{}".format(y, x, next_x, next_y))
-                cell = Cell(self.game, self, STEEL, next_x, next_y, self.cell_width, self.cell_height)
-                self.game_objects.append(cell)
-                next_x += self.cell_width
-            next_y += self.cell_height
-        # setup food items
-        for i in range(10):
-            row = random.randint(0, self.rows-1)
-            column = random.randint(0, self.columns-1)
-            print("FOOD {} at {},{}".format(i, row, column))
-            food = Food(self.game, self, row, column)
-            self.food.append(food)
-            self.game_objects.append(food)
-        # setup snake next
-        self.resetPlayer()
-
-    def spawnPlayer(self):
-        snake_x = random.randint(0, self.rows - 1)
-        snake_y = random.randint(0, self.columns - 1)
-        print("Snake at {},{}".format(snake_x, snake_y))
-        snake = Snake(self.game, self, YELLOW, snake_x, snake_y)
+    def spawnPlayer(self, x, y):
+        print("Snake at {},{}".format(x, y))
+        snake = Snake(self.game, self, YELLOW, x, y, CELL_WIDTH, CELL_HEIGHT)
         return snake
 
-    def resetPlayer(self):
+    def resetPlayer(self, x, y):
         if self.snake:
             self.safe_remove(self.snake)
-        # basically respawn player somewhere randomly
-        self.snake = self.spawnPlayer()
+        self.snake = self.spawnPlayer(x, y)
         self.game_objects.append(self.snake)
-        self.snake.add_event_listener(EVENT_POSITON_CHANGED, self)
+        self.snake.add_event_listener(EVENT_POSITION_CHANGED, self)
         self.ignore_events = False
+
+    def onGameOver(self):
+        print("GAME OVER!!!")
+        print("WIN: ", self.state.won)
+        print("Score: ", self.state.score)
 
     def handleDeath(self):
         print("Player is DEAD!")
@@ -320,39 +316,57 @@ class GameScene(Scene):
             self.game.schedule(50, USER_TIMER, cb)
             return
         # out of lives
-        print("Game really ended")
-        self.state.gameover = True
+        print("Out of Lives!")
+        self.onGameOver()
+
+    def clamp_object_position(self, x, y):
+        if x < self.bounds.left:
+            x = self.bounds.left
+        if x > self.bounds.right - CELL_WIDTH:
+            x = self.bounds.right - CELL_WIDTH
+        if y < self.bounds.top:
+            y = self.bounds.top
+        if y > self.bounds.bottom - CELL_HEIGHT:
+            y = self.bounds.bottom - CELL_HEIGHT
+        return [x, y]
 
     def doFoodCheck(self, source):
         source_bounds = source.get_bounds()
 
-        for i in range(len(self.food)-1, 0, -1):
-            food = self.food[i]
+        for i in range(len(self.food_objects)-1, -1, -1):
+            food = self.food_objects[i]
             food_bounds = food.get_bounds()
             if self.intersects(source_bounds, food_bounds):
                 # ate food
                 print("Ate some food!")
-                self.food.remove(food)
+                self.state.score += food.get_score()
+                self.food_objects.remove(food)
                 self.safe_remove(food)
-                break
+
+        if len(self.food_objects) == 0:
+            # ate em all
+            print("Ate ALL food!")
+            self.state.won = True
+            print("You WIN!!!")
+            self.state.gameover = True
+            self.onGameOver()
 
     def doDeathCheck(self, source):
         dead = False
         source_bounds = source.get_bounds()
-        if source_bounds.x <= self.border_width:
+        if source_bounds.x <= BORDER_WIDTH:
             print("HIT left wall!")
             dead = True
-        elif source_bounds.x > self.size[0] - self.cell_width - self.border_width:
+        elif source_bounds.x > self.size[0] - CELL_WIDTH - BORDER_WIDTH:
             print("HIT right wall!")
             dead = True
-        elif source_bounds.y <= self.border_height:
+        elif source_bounds.y <= BORDER_HEIGHT:
             print("HIT top wall!")
             dead = True
-        elif source_bounds.y > self.size[1] - self.cell_height - self.border_height:
+        elif source_bounds.y > self.size[1] - CELL_HEIGHT - BORDER_HEIGHT:
             print("HIT bottom wall!")
             dead = True
         if(dead):
-            self.handleDeath()
             return True
         return False
 
@@ -378,27 +392,36 @@ class GameScene(Scene):
             obj.update(dt)
 
     def draw(self):
-        self.screen.fill(BLACK)
+        # clear screen
+        self.screen.fill(GREY)
+
         # draw the border. since the width and height could be different,
         # we have to draw them independently
-        pygame.draw.line(self.screen, ORANGE, [0, 0], [0, self.size[1]], self.border_width*2)
-        pygame.draw.line(self.screen, ORANGE, [0, 0], [self.size[0], 0], self.border_height*2)
-        pygame.draw.line(self.screen, ORANGE, [self.size[0], 0], [self.size[0], self.size[1]], self.border_width * 2)
-        pygame.draw.line(self.screen, ORANGE, [0, self.size[1]], [self.size[0], self.size[1]], self.border_height * 2)
+        pygame.draw.line(self.screen, ORANGE, [0, 0], [0, self.size[1]], BORDER_WIDTH*2)
+        pygame.draw.line(self.screen, ORANGE, [0, 0], [self.size[0], 0], BORDER_HEIGHT*2)
+        pygame.draw.line(self.screen, ORANGE, [self.size[0], 0], [self.size[0], self.size[1]], BORDER_WIDTH * 2)
+        pygame.draw.line(self.screen, ORANGE, [0, self.size[1]], [self.size[0], self.size[1]], BORDER_HEIGHT * 2)
 
         # draw objects
         for obj in self.game_objects:
             obj.draw(self.screen)
 
-        # XXX draw lines now
-        next_x = self.border_width + self.cell_width
-        for i in range(self.columns):
-            pygame.draw.line(self.screen, GREY, [next_x, self.border_height], [next_x, self.size[1] - self.border_height])
-            next_x += self.cell_width
-        next_y = self.border_height + self.cell_height
-        for i in range(self.rows):
-            pygame.draw.line(self.screen, GREY, [self.border_width, next_y], [self.size[0] - self.border_width, next_y])
-            next_y += self.cell_height
+
+class GameEventHandler:
+    def __init__(self, game, scene):
+        self.game = game
+        self.scene = scene
+
+    def onEvent(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_DOWN:
+                self.scene.snake.set_direction(DIRECTION_DOWN)
+            if event.key == pygame.K_UP:
+                self.scene.snake.set_direction(DIRECTION_UP)
+            if event.key == pygame.K_LEFT:
+                self.scene.snake.set_direction(DIRECTION_LEFT)
+            if event.key == pygame.K_RIGHT:
+                self.scene.snake.set_direction(DIRECTION_RIGHT)
 
 
 class Game:
@@ -412,6 +435,7 @@ class Game:
         self.state = GameState()
         self.scene = GameScene(self)
         self.state.scene = self.scene
+        self.handler = GameEventHandler(self, self.scene)
 
     def get_state(self):
         return self.state
@@ -460,6 +484,7 @@ class Game:
                     self.resume() if self.state.paused else self.pause()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
+                self.handler.onEvent(event)
             self.scene.update(dt)
             self.scene.draw()
             pygame.display.flip()
