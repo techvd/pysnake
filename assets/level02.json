@@ -1,0 +1,187 @@
+{
+  "name": "Test Level",
+  "background": "32, 32, 32",
+  "layout": {
+    "border": {
+      "left": 32,
+      "top": 48,
+      "right": 32,
+      "bottom": 32,
+      "color": "200, 200, 200"
+    }
+  },
+  "hud": {
+    "location": "top",
+    "height": 48,
+    "color": "200, 200, 200",
+    "score": {
+      "font": "",
+      "weight": 30,
+      "color": "0, 0, 200",
+      "anchor": "left"
+    },
+    "lives": {
+      "font": "",
+      "weight": 30,
+      "color": "0, 200, 0",
+      "anchor": "right"
+    }
+  },
+  "snake": {
+    "position": "340, 600",
+    "size": "32, 32",
+    "speed": 50
+  },
+  "food_items": [
+    {
+      "position": "100, 100",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "203, 293",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "400, 100",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "200, 400",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "300, 600",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "400, 500",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "500, 650",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "600, 700",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "300, 800",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "150, 1000",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "250, 1100",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "528, 299",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "386, 416",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "112, 500",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "175, 768",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "494, 939",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "103, 1155",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "203, 664",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "103, 1155",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "593, 517",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "583, 1159",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "492, 814",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "345, 1000",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "300, 200",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "492, 814",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "434, 1102",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "394, 288",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "619, 207",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "110, 923",
+      "size": "64, 64",
+      "score": 50
+    },
+    {
+      "position": "84, 255",
+      "size": "64, 64",
+      "score": 50
+    }
+  ]
+}

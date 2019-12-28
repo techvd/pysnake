@@ -1,8 +1,17 @@
 {
   "name": "Test Level",
+  "layout": {
+    "border": {
+      "left": 32,
+      "top": 48,
+      "right": 32,
+      "bottom": 32
+    }
+  },
   "snake": {
     "position": "340, 600",
-    "size": "64, 64"
+    "size": "32, 32",
+    "speed": 50
   },
   "food_items": [
     {
