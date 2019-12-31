@@ -290,6 +290,28 @@ class Scene(GroupObject):
     def get_screen(self):
         return self.screen
 
+    def do_fade(self, _from, _to):
+        _incr = 8
+        if _from > _to:
+            _incr = -8
+        _w = self.size[0]
+        _h = self.size[1]
+        print(_w, _h)
+        _fade = pygame.Surface((_w, _h))
+        _fade.fill((0, 0, 0))
+        for alpha in range(_from, _to, _incr):
+            _fade.set_alpha(alpha)
+            self.draw()
+            self.screen.blit(_fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(30)
+
+    def fade_out(self):
+        self.do_fade(0, 160)
+
+    def fade_in(self):
+        self.do_fade(160, 0)
+
 
 class Food(StaticObject):
     def __init__(self, game, scene, props):
@@ -610,13 +632,16 @@ class Game:
 
     def pause(self):
         self.state.paused = True
+        self.scene.fade_out()
         print("Paused")
 
     def isPaused(self):
         return self.state.paused
 
     def resume(self):
+        self.scene.fade_in()
         self.state.paused = False
+        print("Resumed")
 
     def schedule(self, millis, _id, callback):
         print("SCHEDULE ", _id)
@@ -654,15 +679,18 @@ class Game:
                     self.handleUserEvent(event.id)
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     sys.exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                    self.scene.fade_out()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                     self.resume() if self.state.paused else self.pause()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos()
                     print("POS: ", pos)
                 self.handler.onEvent(event)
-            self.scene.update(dt)
-            self.scene.draw()
-            pygame.display.flip()
+            if not self.state.paused:
+                self.scene.update(dt)
+                self.scene.draw()
+                pygame.display.flip()
             self.scene.finish_safe_remove()
 
 
