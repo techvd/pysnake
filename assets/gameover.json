@@ -1,0 +1,15 @@
+{
+  "name": "Gamve Over Screen",
+  "background": {
+    "type": "image",
+    "position": "0, 0",
+    "size": "720, 1280",
+    "image": "gameover.png"
+  },
+  "button": {
+    "type": "image",
+    "position": "200, 800",
+    "size": "320, 160",
+    "image": "ok.png"
+  }
+}
