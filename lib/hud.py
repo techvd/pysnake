@@ -25,15 +25,15 @@ class Hud(GroupObject):
         self.add_object(self.lives)
         self.lives.set_text("Lives: 3", True)
         # finally, listen to changes
-        eventmanager.EventManager().add_event_listener(eventmanager.EVENT_SCORE_CHANGED, self)
-        eventmanager.EventManager().add_event_listener(eventmanager.EVENT_LIVES_CHANGED, self)
+        eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_SCORE_CHANGED, self)
+        eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_LIVES_CHANGED, self)
 
-    def onEvent(self, event, caller):
-        print("HUD onEvent: ", event)
-        if event == eventmanager.EVENT_SCORE_CHANGED:
+    def handle_event(self, event, **kwargs):
+        print("HUD handle_event: ", event)
+        if event.code == eventmanager.GAMEEVENT_SCORE_CHANGED:
             _state = self.game.get_state()
             self.score.set_text("Score: {}".format(_state.score), True)
-        if event == eventmanager.EVENT_LIVES_CHANGED:
+        if event.code == eventmanager.GAMEEVENT_LIVES_CHANGED:
             _state = self.game.get_state()
             self.lives.set_text("Lives: {}".format(_state.lives), True)
 

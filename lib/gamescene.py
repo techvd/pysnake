@@ -57,7 +57,7 @@ class GameScene(scene.Scene):
     def setupPlayer(self, snake):
         self.snake = snake
         self.add_object(self.snake)
-        eventmanager.EventManager().add_event_listener(eventmanager.EVENT_POSITION_CHANGED, self)
+        eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_POSITION_CHANGED, self)
         self.ignore_events = False
 
     def resetPlayer(self):
@@ -74,7 +74,7 @@ class GameScene(scene.Scene):
         print("GAME OVER!!!")
         print("WIN: ", self.state.won)
         print("Score: ", self.state.score)
-        eventmanager.EventManager().raise_event(eventmanager.EVENT_GAME_OVER)
+        eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_GAME_OVER)
 
     def handleDeath(self):
         print("Player is DEAD!")
@@ -84,7 +84,7 @@ class GameScene(scene.Scene):
             self.snake.set_active(False)
             print("Initiating RESET")
             cb = partial(self.resetPlayer)
-            self.game.schedule(50, constants.USER_TIMER_ONCE, cb)
+            eventmanager.EventManager().schedule(50, cb)
             return
         # out of lives
         print("Out of Lives!")
@@ -142,17 +142,19 @@ class GameScene(scene.Scene):
             return True
         return False
 
-    def onEvent(self, event, source):
-        # if gameover already, ignore
+    def handle_event(self, event, **kwargs):
+        # XXX if gameover already, ignore?
         if self.state.gameover:
             return
-        # just assume snake for now, only thing that moves
-        if self.doDeathCheck(source):
-            self.handleDeath()
-            return
-        # not dead, check food
-        if self.doFoodCheck(source):
-            return
+        #print(event)
+        if event.code == eventmanager.GAMEEVENT_POSITION_CHANGED:
+            # just assume snake for now, only thing that moves
+            if self.doDeathCheck(self.snake):
+                self.handleDeath()
+                return
+            # not dead, check food
+            if self.doFoodCheck(self.snake):
+                return
 
     def draw(self):
         # clear screen

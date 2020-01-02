@@ -21,8 +21,8 @@ class GameState:
 
     def update_score(self, delta):
         self.score += delta
-        eventmanager.EventManager().raise_event(eventmanager.EVENT_SCORE_CHANGED)
+        eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_SCORE_CHANGED)
 
     def update_lives(self, delta):
         self.lives += delta
-        eventmanager.EventManager().raise_event(eventmanager.EVENT_LIVES_CHANGED)
+        eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_LIVES_CHANGED)

@@ -10,12 +10,12 @@ class GameOverScene(scene.Scene):
         super().__init__(game, None)
         self.name = "GAMEOVER"
         self.background = None
-        self.load_level('assets/gameover.json')
+        self.load_scene('assets/gameover.json')
 
     def get_layout(self):
         return self.layout
 
-    def load_level(self, file):
+    def load_scene(self, file):
         with open(file) as level_file:
             _level = json.load(level_file)
             self.name = _level['name']

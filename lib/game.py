@@ -25,7 +25,8 @@ class Game:
         self.scene = splash.SplashScene(self)
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
-        self.schedule(2500, constants.USER_TIMER_SPLASH, partial(self.continueSplash))
+        #self.schedule(2500, constants.USER_TIMER_SPLASH, partial(self.continueSplash))
+        eventmanager.EventManager().schedule(2500, partial(self.continueSplash))
 
     def get_state(self):
         return self.state
@@ -49,11 +50,6 @@ class Game:
         self.state.paused = False
         print("Resumed")
 
-    def schedule(self, millis, _id, callback):
-        print("SCHEDULE ", _id)
-        self.timer_callbacks[_id] = callback
-        pygame.time.set_timer(_id, millis)
-
     def continueSplash(self):
         print("Continue from Splash...")
         print(self)
@@ -61,7 +57,7 @@ class Game:
         self.scene = gamescene.GameScene(self)
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
-        eventmanager.EventManager().add_event_listener(eventmanager.EVENT_GAME_OVER, self)
+        eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_GAME_OVER, self)
 
     def handleUserTimer(self, _id):
         pygame.time.set_timer(_id, 0)
@@ -74,9 +70,9 @@ class Game:
         callback = self.timer_callbacks[_id]
         callback()
 
-    def onEvent(self, event, caller):
+    def handle_event(self, event, **kwargs):
         print("GAME onEvent ", event)
-        if event == eventmanager.EVENT_GAME_OVER:
+        if event.code == eventmanager.GAMEEVENT_GAME_OVER:
             self.scene = gameover.GameOverScene(self)
             self.state.scene = self.scene
             self.state.state = gamestate.STATE_GAME
@@ -93,26 +89,15 @@ class Game:
                 dt = 1.0 / dt
             # print("Elapsed: ", dt)
             for event in pygame.event.get():
+                # XXX temporary
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if event.type == constants.USER_TIMER_ONCE or event.type == constants.USER_TIMER_SPLASH:
-                    print("USER_TIMER!!!")
-                    self.handleUserTimer(event.type)
-                if event.type == pygame.USEREVENT:
-                    self.handleUserEvent(event.id)
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    sys.exit()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_f:
-                    self.scene.fade_out()
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.resume() if self.state.paused else self.pause()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    print("POS: ", pos)
-                if self.handler is not None:
-                    self.handler.onEvent(event)
+                if event.type == pygame.KEYDOWN:
+                    self.handler.handle_event(event)
+                    continue
+                eventmanager.EventManager().handle_event(event)
             if not self.state.paused:
                 self.scene.update(dt)
-                self.scene.draw()
-                pygame.display.flip()
+            self.scene.draw()
+            pygame.display.flip()
             self.scene.finish_safe_remove()
