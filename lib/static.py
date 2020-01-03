@@ -9,7 +9,3 @@ class StaticObject(gameobject.GameObject):
         _sprite = "assets/" + props['image']
         obj = pygame.image.load(_sprite)
         self.pygame_object = pygame.transform.smoothscale(obj, [self.size[0], self.size[1]])
-
-    def draw(self, surface):
-        #pygame.draw.rect(surface, BLACK, self.bounds)
-        gameobject.GameObject.draw(self, surface)

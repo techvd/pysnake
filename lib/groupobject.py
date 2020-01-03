@@ -6,6 +6,7 @@ class GroupObject(GameObject):
         super().__init__(game, scene, props)
         self.ignore_events = False
         self.game_objects = []
+        self.layered_game_objects = []
         self.remove_stack = []
 
     def add_object(self, obj):
@@ -30,6 +31,15 @@ class GroupObject(GameObject):
             print("Removing from stack: ", obj)
             self.game_objects.remove(obj)
         self.remove_stack.clear()
+
+    def get_object_at(self, x, y):
+        for obj in self.game_objects:
+            _bounds = obj.bounds
+            if _bounds is None:
+                continue
+            if _bounds.collidepoint(x, y):
+                return obj
+        return None
 
     def update(self, dt):
         if self.ignore_events:

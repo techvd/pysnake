@@ -1,14 +1,9 @@
 import pygame
-import json
 from functools import partial
 
 from lib import scene
-from lib import layout
 from lib import utilities
-from lib import snake
-from lib import food
 from lib import constants
-from lib import hud
 from lib import eventmanager
 
 
@@ -22,37 +17,33 @@ class GameScene(scene.Scene):
         self.hud = None
         self.bounds = None
         self.food_objects = []
-        self.load_level('assets/level02.json')
         # self.debug = Text(self, "PySnake")
         # self.game_objects.append(self.debug)
+
+    def set_background_color(self, col):
+        self.background_color = col
 
     def get_layout(self):
         return self.layout
 
-    def load_level(self, file):
-        with open(file) as level_file:
-            _level = json.load(level_file)
-            self.name = _level['name']
-            self.background_color = utilities.parse_color(_level['background_color'])
-            # process layout
-            self.layout = layout.Layout(_level)
-            self.bounds = pygame.Rect(self.layout.border_left, self.layout.border_top,
-                                      self.size[0] - self.layout.border_right,
-                                      self.size[1] - self.layout.border_bottom)
-            # process hud
-            _hud = _level['hud']
-            self.hud = hud.Hud(self.game, self, _hud)
-            self.add_object(self.hud)
-            # setup snake next
-            _snake = _level['snake']
-            _snakeObj = snake.Snake(self.game, self, constants.YELLOW, _snake)
-            self.setupPlayer(_snakeObj)
-            _food_nodes = _level['food_items']
-            print("Foods: #{}".format(len(_food_nodes)))
-            for node in _food_nodes:
-                foodObj = food.Food(self.game, self, node)
-                self.food_objects.append(foodObj)
-                self.add_object(foodObj)
+    def set_layout(self, layout):
+        self.layout = layout
+        self.bounds = pygame.Rect(layout.border_left, layout.border_top,
+                                  self.size[0] - layout.border_right,
+                                  self.size[1] - layout.border_bottom)
+
+    def add_hud(self, hud):
+        # TODO assume just one for now
+        self.hud = hud
+        self.add_object(self.hud)
+
+    def add_snake(self, snake):
+        self.snake = snake
+        self.setupPlayer(snake)
+
+    def add_food(self, food):
+        self.food_objects.append(food)
+        self.add_object(food)
 
     def setupPlayer(self, snake):
         self.snake = snake
@@ -156,19 +147,19 @@ class GameScene(scene.Scene):
             if self.doFoodCheck(self.snake):
                 return
 
-    def draw(self):
+    def draw(self, surface):
         # clear screen
-        self.screen.fill(self.background_color)
+        surface.fill(self.background_color)
 
         # draw the border. since the width and height could be different,
         # we have to draw them independently
-        pygame.draw.line(self.screen, self.layout.border_color, [0, self.layout.border_top/2-1],
+        pygame.draw.line(surface, self.layout.border_color, [0, self.layout.border_top/2-1],
                          [self.size[0], self.layout.border_top/2-1], self.layout.border_top)
-        pygame.draw.line(self.screen, self.layout.border_color, [0, self.size[1]-self.layout.border_bottom/2],
+        pygame.draw.line(surface, self.layout.border_color, [0, self.size[1]-self.layout.border_bottom/2],
                          [self.size[0], self.size[1]-self.layout.border_bottom/2], self.layout.border_bottom)
-        pygame.draw.line(self.screen, self.layout.border_color, [self.layout.border_left/2-1, 0],
+        pygame.draw.line(surface, self.layout.border_color, [self.layout.border_left/2-1, 0],
                          [self.layout.border_left/2-1, self.size[1]], self.layout.border_left)
-        pygame.draw.line(self.screen, self.layout.border_color, [self.size[0]-self.layout.border_right/2, 0],
+        pygame.draw.line(surface, self.layout.border_color, [self.size[0]-self.layout.border_right/2, 0],
                          [self.size[0]-self.layout.border_right/2, self.size[1]], self.layout.border_right)
 
-        super().draw(self.screen)
+        super().draw(surface)

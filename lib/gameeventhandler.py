@@ -21,3 +21,9 @@ class GameEventHandler:
             if event.key == pygame.K_RIGHT:
                 eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_DIRECTION_CHANGE,
                                                         direction=constants.DIRECTION_RIGHT)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            _scene = self.game.get_scene()
+            _obj = _scene.get_object_at(event.pos[0], event.pos[1])
+            if _obj is not None:
+                eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_TOUCH_OBJECT,
+                                                        object=_obj)

@@ -1,5 +1,6 @@
 {
   "name": "Test Level",
+  "type": "game",
   "background_color": "32, 32, 32",
   "layout": {
     "border": {

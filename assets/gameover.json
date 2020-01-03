@@ -1,5 +1,6 @@
 {
-  "name": "Gamve Over Screen",
+  "name": "Game Over Screen",
+  "type": "gameover",
   "background": {
     "type": "image",
     "position": "0, 0",

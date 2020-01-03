@@ -9,6 +9,7 @@ from lib import gamescene
 from lib import gameover
 from lib import gameeventhandler
 from lib import eventmanager
+from lib import sceneloader
 
 
 class Game:
@@ -21,11 +22,10 @@ class Game:
         self.screen = pygame.display.set_mode(self.size)
         self.state = gamestate.GameState()
         self.handler = gameeventhandler.GameEventHandler(self)
-        #self.scene = gamescene.GameScene(self)
-        self.scene = splash.SplashScene(self)
+        self.loader = sceneloader.SceneLoader()
+        self.scene = self.loader.load_scene(self, 'assets/splash01.json')
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
-        #self.schedule(2500, constants.USER_TIMER_SPLASH, partial(self.continueSplash))
         eventmanager.EventManager().schedule(2500, partial(self.continueSplash))
 
     def get_state(self):
@@ -36,6 +36,9 @@ class Game:
 
     def get_screen(self):
         return self.screen
+
+    def get_scene(self):
+        return self.scene
 
     def pause(self):
         self.state.paused = True
@@ -54,7 +57,7 @@ class Game:
         print("Continue from Splash...")
         print(self)
 
-        self.scene = gamescene.GameScene(self)
+        self.scene = self.loader.load_scene(self, 'assets/level02.json')
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_GAME_OVER, self)
@@ -73,10 +76,9 @@ class Game:
     def handle_event(self, event, **kwargs):
         print("GAME onEvent ", event)
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
-            self.scene = gameover.GameOverScene(self)
+            self.scene = self.loader.load_scene(self, 'assets/gameover.json')
             self.state.scene = self.scene
-            self.state.state = gamestate.STATE_GAME
-            self.handler = None
+            self.state.state = gamestate.STATE_GAMEOVER
 
     def run(self):
         last_ticks = pygame.time.get_ticks()
@@ -95,9 +97,12 @@ class Game:
                 if event.type == pygame.KEYDOWN:
                     self.handler.handle_event(event)
                     continue
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.handler.handle_event(event)
+                    continue
                 eventmanager.EventManager().handle_event(event)
             if not self.state.paused:
                 self.scene.update(dt)
-            self.scene.draw()
+            self.scene.draw(self.screen)
             pygame.display.flip()
             self.scene.finish_safe_remove()

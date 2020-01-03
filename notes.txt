@@ -1,3 +1,6 @@
-12/27/19
+1/1/20
+* GUI handling
+how to model mouse press, etc?
 
+12/27/19
 * Should parent be passed as constructor?
