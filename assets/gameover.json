@@ -1,6 +1,7 @@
 {
   "name": "Game Over Screen",
   "type": "gameover",
+  "size": "720, 1280",
   "background": {
     "type": "image",
     "position": "0, 0",

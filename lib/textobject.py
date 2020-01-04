@@ -6,13 +6,20 @@ from lib import utilities
 
 
 class Text(gameobject.GameObject):
-    def __init__(self, game, scene, props):
-        super().__init__(game, scene, props)
+    def __init__(self, game):
+        super().__init__(game)
+        _weight = 0
+        self.anchor = ''
+        self.font = None
+        self.color = None
+        self.text = ""
+
+    def load_props(self, scene_loader, props):
+        super().load_props(scene_loader, props)
         _weight = utilities.parse_value(props['weight'])
         self.anchor = props['anchor']
         self.font = pygame.font.Font(None, _weight)
         self.color = utilities.parse_color(props['color'])
-        self.text = ""
 
     def set_text(self, text, adjust = False):
         self.text = text

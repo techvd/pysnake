@@ -1,6 +1,7 @@
 {
   "name": "Splash Screen",
   "type": "splash",
+  "size": "720, 1280",
   "background": {
     "type": "image",
     "position": "0, 0",

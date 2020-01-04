@@ -1,4 +1,3 @@
-import pygame
 import json
 
 from lib import splash
@@ -6,73 +5,71 @@ from lib import gameover
 from lib import gamescene
 from lib import static
 from lib import layout
-from lib import utilities
 from lib import snake
-from lib import food
-from lib import constants
 from lib import hud
-
+from lib import textobject
+from lib import food
 
 class SceneLoader:
-    def load_scene(self, game, file):
+    def __init__(self, game):
+        self.game = game
+        self.scene = None
+
+    def get_game(self):
+        return self.game
+
+    def get_scene(self):
+        return self.scene
+
+    def create_node(self, key, node):
+        obj = None
+        if key == 'layout':
+            print("Loader: Creating layout...")
+            obj = layout.Layout()
+        elif key == 'background':
+            print("Loader: Creating background...")
+            obj = static.StaticObject(self.game)
+        elif key == 'hud':
+            print("Loader: Creating hud...")
+            obj = hud.Hud(self.game)
+        elif key == 'food':
+            print("Loader: Creating food...")
+            obj = food.Food(self.game)
+        elif key == 'snake':
+            print("Loader: Creating snake...")
+            obj = snake.Snake(self.game)
+        elif key == 'button':
+            print("Loader Creating button...")
+            obj = static.StaticObject(self.game)
+        elif key == 'score' or key == 'lives' or key == 'text': # TODO generalize this
+            print("Loader: Creating text...")
+            obj = textobject.Text(self.game)
+        if obj:
+            obj.load_props(self, node)
+            return obj
+        else:
+            print("Loader: unrecognized tag in create_node: ", key)
+            return None
+
+    def load_scene(self, file):
         with open(file) as level_file:
             print("Loader: Loading from ", file, "...")
             _level = json.load(level_file)
-            print(_level)
             # check type first
             _type = _level['type']
-            _scene = None
+            self.scene = None
             if _type == 'splash':
                 print("Loader: Creating splash scene...")
-                _scene = splash.SplashScene(game)
+                self.scene = splash.SplashScene(self.game)
             elif _type == 'gameover':
                 print("Loader: Creating gameover scene...")
-                _scene = gameover.GameOverScene(game)
+                self.scene = gameover.GameOverScene(self.game)
             elif _type == 'game':
                 print("Loader: Creating game scene...")
-                _scene = gamescene.GameScene(game)
-            if _scene is None:
+                self.scene = gamescene.GameScene(self.game)
+            if self.scene is None:
                 print("E: Cannot create scene from file")
                 return None
-            for _key in _level:
-                print("Loader: Processing ", _key, "...")
-                if _key == 'name':
-                    _scene.name = _level['name']
-                    continue
-                if _key == 'background':
-                    print("Loader: Creating background...")
-                    _background = static.StaticObject(game, _scene, _level['background'])
-                    _scene.set_background(_background)
-                    continue
-                if _key == 'background_color':
-                    print("Loader: Setting background color...")
-                    _scene.set_background_color(utilities.parse_color(_level['background_color']))
-                    continue
-                if _key == 'layout':
-                    # process layout
-                    print("Loader: Creating layout...")
-                    _layout = layout.Layout(_level['layout'])
-                    _scene.set_layout(_layout)
-                    continue
-                if _key == 'hud':
-                    # process hud
-                    print("Loader: Creating hud...")
-                    _hud = hud.Hud(game, _scene, _level['hud'])
-                    _scene.add_hud(_hud)
-                    continue
-                if _key == 'snake':
-                    print("Loader: Creating snake...")
-                    _snake = snake.Snake(game, _scene, constants.YELLOW, _level['snake'])
-                    _scene.add_snake(_snake)
-                    continue
-                if _key == 'food_items':
-                    _food_nodes = _level['food_items']
-                    print("Foods: #{}".format(len(_food_nodes)))
-                    for node in _food_nodes:
-                        _food = food.Food(game, _scene, node)
-                        _scene.add_food(_food)
-                    continue
-                if _key == 'button':
-                    _scene.add_button(_level['button'])
-            return _scene
+            self.scene.load_props(self, _level)
+            return self.scene
         return None

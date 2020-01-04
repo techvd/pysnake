@@ -9,16 +9,24 @@ from lib import eventmanager
 
 class GameScene(scene.Scene):
     def __init__(self, game):
-        super().__init__(game, None)
-        self.name = "UNKNOWN"
-        self.background_color = constants.GREY
+        super().__init__(game)
         self.snake = None
-        self.layout = None
-        self.hud = None
-        self.bounds = None
         self.food_objects = []
         # self.debug = Text(self, "PySnake")
         # self.game_objects.append(self.debug)
+
+    def load_props(self, scene_loader, props):
+        super().load_props(scene_loader, props)
+        if props is not None:
+            if 'snake' in props:
+                snake_obj = scene_loader.create_node('snake', props['snake'])
+                self.setupPlayer(snake_obj)
+            if 'food_items' in props:
+                _food_nodes = props['food_items']
+                print("Foods: #{}".format(len(_food_nodes)))
+                for node in _food_nodes:
+                    food_obj = scene_loader.create_node('food', node)
+                    self.add_food(food_obj)
 
     def set_background_color(self, col):
         self.background_color = col
@@ -63,14 +71,12 @@ class GameScene(scene.Scene):
         self.ignore_events = True
         self.snake.set_active(False)
         print("GAME OVER!!!")
-        print("WIN: ", self.state.won)
-        print("Score: ", self.state.score)
         eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_GAME_OVER)
 
     def handleDeath(self):
         print("Player is DEAD!")
-        self.state.update_lives(-1)
-        if self.state.lives > 0:
+        self.game.get_state().update_lives(-1)
+        if self.game.get_state().lives > 0:
             self.ignore_events = True
             self.snake.set_active(False)
             print("Initiating RESET")
@@ -81,18 +87,6 @@ class GameScene(scene.Scene):
         print("Out of Lives!")
         self.onGameOver()
 
-    def clamp_object_position(self, obj, x, y):
-        objbounds = obj.get_bounds()
-        if x < self.bounds.left:
-            x = self.bounds.left
-        if x > self.bounds.right - objbounds.width:
-            x = self.bounds.right - objbounds.width
-        if y < self.bounds.top:
-            y = self.bounds.top
-        if y > self.bounds.bottom - objbounds.height:
-            y = self.bounds.bottom - objbounds.height
-        return [x, y]
-
     def doFoodCheck(self, source):
         source_bounds = source.get_bounds()
 
@@ -102,16 +96,16 @@ class GameScene(scene.Scene):
             if utilities.intersects(source_bounds, food_bounds):
                 # ate food
                 print("Ate some food!")
-                self.state.update_score(foodObj.get_score())
+                self.game.get_state().update_score(foodObj.get_score())
                 self.food_objects.remove(foodObj)
                 self.safe_remove(foodObj)
 
         if len(self.food_objects) == 0:
             # ate em all
             print("Ate ALL food!")
-            self.state.won = True
+            self.game.get_state().won = True
             print("You WIN!!!")
-            self.state.gameover = True
+            self.game.get_state().gameover = True
             self.onGameOver()
 
     def doDeathCheck(self, source):
@@ -135,9 +129,8 @@ class GameScene(scene.Scene):
 
     def handle_event(self, event, **kwargs):
         # XXX if gameover already, ignore?
-        if self.state.gameover:
+        if self.game.get_state().gameover:
             return
-        #print(event)
         if event.code == eventmanager.GAMEEVENT_POSITION_CHANGED:
             # just assume snake for now, only thing that moves
             if self.doDeathCheck(self.snake):
@@ -148,9 +141,7 @@ class GameScene(scene.Scene):
                 return
 
     def draw(self, surface):
-        # clear screen
-        surface.fill(self.background_color)
-
+        super().draw(surface)
         # draw the border. since the width and height could be different,
         # we have to draw them independently
         pygame.draw.line(surface, self.layout.border_color, [0, self.layout.border_top/2-1],
@@ -162,4 +153,3 @@ class GameScene(scene.Scene):
         pygame.draw.line(surface, self.layout.border_color, [self.size[0]-self.layout.border_right/2, 0],
                          [self.size[0]-self.layout.border_right/2, self.size[1]], self.layout.border_right)
 
-        super().draw(surface)

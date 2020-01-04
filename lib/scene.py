@@ -4,15 +4,16 @@ from lib import groupobject
 
 
 class Scene(groupobject.GroupObject):
-    def __init__(self, game, props):
-        super().__init__(game, self, props)
-        self.state = game.get_state()
-        self.size = game.get_size()
-        self.bounds = pygame.Rect(0, 0, self.size[0], self.size[1])
+    def __init__(self, game):
+        super().__init__(game)
+        self.hud = None
         self.debug_counter = 0
 
-    def get_size(self):
-        return self.size
+    def load_props(self, scene_loader, props):
+        super().load_props(scene_loader, props)
+        if props is not None:
+            if 'hud' in props:
+                self.hud = scene_loader.create_node('hud', props['hud'])
 
     def do_fade(self, _from, _to):
         _incr = 8

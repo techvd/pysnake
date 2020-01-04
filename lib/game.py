@@ -22,8 +22,8 @@ class Game:
         self.screen = pygame.display.set_mode(self.size)
         self.state = gamestate.GameState()
         self.handler = gameeventhandler.GameEventHandler(self)
-        self.loader = sceneloader.SceneLoader()
-        self.scene = self.loader.load_scene(self, 'assets/splash01.json')
+        self.loader = sceneloader.SceneLoader(self)
+        self.scene = self.loader.load_scene('assets/splash01.json')
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
         eventmanager.EventManager().schedule(2500, partial(self.continueSplash))
@@ -57,7 +57,7 @@ class Game:
         print("Continue from Splash...")
         print(self)
 
-        self.scene = self.loader.load_scene(self, 'assets/level02.json')
+        self.scene = self.loader.load_scene('assets/level02.json')
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_GAME_OVER, self)
@@ -76,7 +76,7 @@ class Game:
     def handle_event(self, event, **kwargs):
         print("GAME onEvent ", event)
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
-            self.scene = self.loader.load_scene(self, 'assets/gameover.json')
+            self.scene = self.loader.load_scene('assets/gameover.json')
             self.state.scene = self.scene
             self.state.state = gamestate.STATE_GAMEOVER
 

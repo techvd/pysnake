@@ -2,8 +2,8 @@ from lib.gameobject import GameObject
 
 
 class GroupObject(GameObject):
-    def __init__(self, game, scene, props):
-        super().__init__(game, scene, props)
+    def __init__(self, game):
+        super().__init__(game)
         self.ignore_events = False
         self.game_objects = []
         self.layered_game_objects = []
@@ -13,6 +13,18 @@ class GroupObject(GameObject):
         print("Adding ", obj)
         self.game_objects.append(obj)
         obj.set_parent(self)
+
+    def clamp_object_position(self, obj, x, y):
+        obj_bounds = obj.get_bounds()
+        if x < self.bounds.left:
+            x = self.bounds.left
+        if x > self.bounds.right - obj_bounds.width:
+            x = self.bounds.right - obj_bounds.width
+        if y < self.bounds.top:
+            y = self.bounds.top
+        if y > self.bounds.bottom - obj_bounds.height:
+            y = self.bounds.bottom - obj_bounds.height
+        return [x, y]
 
     def safe_remove(self, obj):
         # just append to stack
@@ -34,21 +46,25 @@ class GroupObject(GameObject):
 
     def get_object_at(self, x, y):
         for obj in self.game_objects:
-            _bounds = obj.bounds
-            if _bounds is None:
-                continue
-            if _bounds.collidepoint(x, y):
+            if obj.is_within(x, y):
                 return obj
+        if self.is_within(x, y):
+            return self
         return None
 
     def update(self, dt):
         if self.ignore_events:
             return
         for obj in self.game_objects:
-            #print("Updating ", obj)
             obj.update(dt)
 
     def draw(self, surface):
-        # draw objects
+        if not self.visible:
+            return
+        # clear screen
+        if self.background_image:
+            self.background_image.draw(surface)
+        else:
+            surface.fill(self.background_color)
         for obj in self.game_objects:
             obj.draw(surface)

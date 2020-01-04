@@ -7,13 +7,22 @@ from lib import eventmanager
 
 
 class Snake(gameobject.GameObject):
-    def __init__(self, game, scene, color, props):
-        super().__init__(game, scene, props)
-        self.starting_position = self.position
-        self.color = color
+    def __init__(self, game):
+        super().__init__(game)
+        self.starting_position = [0, 0]
         self.direction = constants.DIRECTION_UP
-        self.speed = utilities.parse_value(props['speed'])
+        self.color = constants.WHITE
+        self.speed = 50
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_DIRECTION_CHANGE, self)
+
+    def load_props(self, scene_loader, props):
+        super().load_props(scene_loader, props)
+        if props is not None:
+            if 'speed' in props:
+                self.speed = utilities.parse_value(props['speed'])
+            if 'color' in props:
+                self.color = utilities.parse_color(props['color'])
+        self.starting_position = self.position
 
     def draw(self, surface):
         # print(self.bounds)
@@ -46,6 +55,6 @@ class Snake(gameobject.GameObject):
         x += dx
         y = self.position[1]
         y += dy
-        self.position = self.scene.clamp_object_position(self, x, y)
+        self.position = self.parent.clamp_object_position(self, x, y)
         self.update_bounds()
         eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_POSITION_CHANGED)
