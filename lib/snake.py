@@ -25,7 +25,6 @@ class Snake(gameobject.GameObject):
         self.starting_position = self.position
 
     def draw(self, surface):
-        # print(self.bounds)
         pygame.draw.rect(surface, self.color, self.bounds)
 
     def set_direction(self, direction):

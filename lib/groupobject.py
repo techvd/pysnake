@@ -45,7 +45,9 @@ class GroupObject(GameObject):
         self.remove_stack.clear()
 
     def get_object_at(self, x, y):
+        print("get_object_at")
         for obj in self.game_objects:
+            print("Checking with ", obj)
             if obj.is_within(x, y):
                 return obj
         if self.is_within(x, y):

@@ -9,6 +9,8 @@ from lib import snake
 from lib import hud
 from lib import textobject
 from lib import food
+from lib import gui
+
 
 class SceneLoader:
     def __init__(self, game):
@@ -39,8 +41,8 @@ class SceneLoader:
             print("Loader: Creating snake...")
             obj = snake.Snake(self.game)
         elif key == 'button':
-            print("Loader Creating button...")
-            obj = static.StaticObject(self.game)
+            print("Loader Creating gui button...")
+            obj = gui.GUIButton(self.game)
         elif key == 'score' or key == 'lives' or key == 'text': # TODO generalize this
             print("Loader: Creating text...")
             obj = textobject.Text(self.game)

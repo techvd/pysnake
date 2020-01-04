@@ -25,5 +25,6 @@ class GameEventHandler:
             _scene = self.game.get_scene()
             _obj = _scene.get_object_at(event.pos[0], event.pos[1])
             if _obj is not None:
+                print("Mouse Pressed on ", _obj)
                 eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_TOUCH_OBJECT,
                                                         object=_obj)
