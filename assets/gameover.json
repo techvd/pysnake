@@ -3,10 +3,16 @@
   "type": "gameover",
   "size": "720, 1280",
   "background": {
-    "type": "image",
     "position": "0, 0",
     "size": "720, 1280",
     "image": "gameover.png"
+  },
+  "score": {
+    "font": "",
+    "weight": 72,
+    "color": "255, 255, 255",
+    "hanchor": "center",
+    "vanchor": "center"
   },
   "button": {
     "type": "image",

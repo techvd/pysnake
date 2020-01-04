@@ -10,6 +10,7 @@ from lib import hud
 from lib import textobject
 from lib import food
 from lib import gui
+from lib import background
 
 
 class SceneLoader:
@@ -30,7 +31,7 @@ class SceneLoader:
             obj = layout.Layout()
         elif key == 'background':
             print("Loader: Creating background...")
-            obj = static.StaticObject(self.game)
+            obj = background.Background(self.game)
         elif key == 'hud':
             print("Loader: Creating hud...")
             obj = hud.Hud(self.game)

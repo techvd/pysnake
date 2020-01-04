@@ -1,4 +1,3 @@
-from lib import constants
 from lib import eventmanager
 
 
@@ -21,6 +20,16 @@ class GameState:
 
     def update_score(self, delta):
         self.score += delta
+        eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_SCORE_CHANGED)
+
+    def finalize_score(self):
+        if self.lives == 3:
+            # all lives left
+            self.score += 5000
+        elif self.lives == 2:
+            self.score += 3000
+        elif self.lives == 1:
+            self.score += 1000
         eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_SCORE_CHANGED)
 
     def update_lives(self, delta):

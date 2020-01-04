@@ -20,13 +20,13 @@
       "font": "",
       "weight": 30,
       "color": "0, 0, 200",
-      "anchor": "left"
+      "hanchor": "left"
     },
     "lives": {
       "font": "",
       "weight": 30,
       "color": "0, 200, 0",
-      "anchor": "right"
+      "hanchor": "right"
     }
   },
   "snake": {

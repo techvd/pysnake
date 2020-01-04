@@ -14,8 +14,6 @@ class GameObject:
         self.size = [0, 0]
         self.layer = 0
         self.bounds = None
-        self.background_color = constants.BLACK
-        self.background_image = None
         self.layout = None
         self.active = True
         self.visible = True
@@ -73,10 +71,6 @@ class GameObject:
                 self.name = props['name']
             if 'id' in props:
                 self.object_id = props['id']
-            if 'background_color' in props:
-                self.background_color = utilities.parse_color(props['background_color'])
-            if 'background' in props:
-                self.background_image = scene_loader.create_node('background', props['background'])
             if 'position' in props:
                 self.position = utilities.parse_2dvec(props['position'])
             if 'size' in props:

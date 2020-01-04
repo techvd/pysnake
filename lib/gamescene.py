@@ -104,6 +104,8 @@ class GameScene(scene.Scene):
             print("Ate ALL food!")
             self.game.get_state().won = True
             print("You WIN!!!")
+            # add some bonus score
+            self.game.get_state().finalize_score()
             self.game.get_state().gameover = True
             self.onGameOver()
 
@@ -143,12 +145,16 @@ class GameScene(scene.Scene):
         super().draw(surface)
         # draw the border. since the width and height could be different,
         # we have to draw them independently
+        # XXX no need to draw top; hud takes care of it
         #pygame.draw.line(surface, self.layout.border_color, [0, self.layout.border_top/2-1],
         #                 [self.size[0], self.layout.border_top/2-1], self.layout.border_top)
+        # bottom
         pygame.draw.line(surface, self.layout.border_color, [0, self.size[1]-self.layout.border_bottom/2],
                          [self.size[0], self.size[1]-self.layout.border_bottom/2], self.layout.border_bottom)
-        pygame.draw.line(surface, self.layout.border_color, [self.layout.border_left/2-1, 0],
+        # left
+        pygame.draw.line(surface, self.layout.border_color, [self.layout.border_left/2-1, self.layout.border_top],
                          [self.layout.border_left/2-1, self.size[1]], self.layout.border_left)
-        pygame.draw.line(surface, self.layout.border_color, [self.size[0]-self.layout.border_right/2, 0],
+        # right
+        pygame.draw.line(surface, self.layout.border_color, [self.size[0]-self.layout.border_right/2, self.layout.border_top],
                          [self.size[0]-self.layout.border_right/2, self.size[1]], self.layout.border_right)
 

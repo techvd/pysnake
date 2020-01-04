@@ -22,12 +22,14 @@ class Hud(GroupObject):
         # TODO revisit this part
         if self.location == "top":
             self.bounds = pygame.Rect(0, 0, scene_size[0], self.height)
-        self.score = scene_loader.create_node('score', props['score'])
-        self.add_object(self.score)
-        self.score.set_text("Score: 0", True)
-        self.lives = scene_loader.create_node('lives', props['lives'])
-        self.add_object(self.lives)
-        self.lives.set_text("Lives: 3", True)
+        if 'score' in props:
+            self.score = scene_loader.create_node('score', props['score'])
+            self.add_object(self.score)
+            self.score.set_text("Score: 0", True)
+        if 'lives' in props:
+            self.lives = scene_loader.create_node('lives', props['lives'])
+            self.add_object(self.lives)
+            self.lives.set_text("Lives: 3", True)
         # finally, listen to changes
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_SCORE_CHANGED, self)
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_LIVES_CHANGED, self)

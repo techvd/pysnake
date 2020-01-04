@@ -1,10 +1,14 @@
-from lib.gameobject import GameObject
+from lib import gameobject
+from lib import constants
+from lib import utilities
 
 
-class GroupObject(GameObject):
+class GroupObject(gameobject.GameObject):
     def __init__(self, game):
         super().__init__(game)
         self.ignore_events = False
+        self.background_color = constants.BLACK
+        self.background = None
         self.game_objects = []
         self.layered_game_objects = []
         self.remove_stack = []
@@ -13,6 +17,15 @@ class GroupObject(GameObject):
         print(self)
         for obj in self.game_objects:
             obj.dump()
+
+    def load_props(self, scene_loader, props):
+        super().load_props(scene_loader, props)
+        if props is not None:
+            if 'background_color' in props:
+                self.background_color = utilities.parse_color(props['background_color'])
+            if 'background' in props:
+                self.background = scene_loader.create_node('background', props['background'])
+                self.add_object(self.background)
 
     def add_object(self, obj):
         self.game_objects.append(obj)
@@ -67,9 +80,8 @@ class GroupObject(GameObject):
     def draw(self, surface):
         if not self.visible:
             return
-        # clear screen
-        if self.background_image:
-            self.background_image.draw(surface)
+        if self.background:
+            self.background.draw(surface)
         else:
             surface.fill(self.background_color, self.bounds)
         for obj in self.game_objects:
