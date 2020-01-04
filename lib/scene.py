@@ -14,6 +14,10 @@ class Scene(groupobject.GroupObject):
         if props is not None:
             if 'hud' in props:
                 self.hud = scene_loader.create_node('hud', props['hud'])
+                self.add_object(self.hud)
+
+    def end_scene(self):
+        pass
 
     def do_fade(self, _from, _to):
         _incr = 8

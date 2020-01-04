@@ -6,6 +6,7 @@ from lib import constants
 class GameObject:
     def __init__(self, game):
         self.name = "GAMEOBJECT"
+        self.object_id = 0
         self.parent = None
         self.pygame_object = None
         self.game = game
@@ -20,6 +21,12 @@ class GameObject:
         self.visible = True
         self.collision = True
         self.frames = 0
+
+    def dump(self):
+        print(self)
+
+    def get_id(self):
+        self.object_id
 
     def get_parent(self):
         return self.parent
@@ -64,6 +71,8 @@ class GameObject:
         if props is not None:
             if 'name' in props:
                 self.name = props['name']
+            if 'id' in props:
+                self.object_id = props['id']
             if 'background_color' in props:
                 self.background_color = utilities.parse_color(props['background_color'])
             if 'background' in props:
@@ -98,5 +107,4 @@ class GameObject:
         if not self.visible:
             return
         if self.pygame_object:
-            #print(self.pygame_object, self.bounds)
             surface.blit(self.pygame_object, self.bounds)

@@ -3,7 +3,6 @@ from functools import partial
 
 from lib import scene
 from lib import utilities
-from lib import constants
 from lib import eventmanager
 
 
@@ -144,8 +143,8 @@ class GameScene(scene.Scene):
         super().draw(surface)
         # draw the border. since the width and height could be different,
         # we have to draw them independently
-        pygame.draw.line(surface, self.layout.border_color, [0, self.layout.border_top/2-1],
-                         [self.size[0], self.layout.border_top/2-1], self.layout.border_top)
+        #pygame.draw.line(surface, self.layout.border_color, [0, self.layout.border_top/2-1],
+        #                 [self.size[0], self.layout.border_top/2-1], self.layout.border_top)
         pygame.draw.line(surface, self.layout.border_color, [0, self.size[1]-self.layout.border_bottom/2],
                          [self.size[0], self.size[1]-self.layout.border_bottom/2], self.layout.border_bottom)
         pygame.draw.line(surface, self.layout.border_color, [self.layout.border_left/2-1, 0],

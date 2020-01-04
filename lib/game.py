@@ -55,9 +55,9 @@ class Game:
 
     def continueSplash(self):
         print("Continue from Splash...")
-        print(self)
-
+        self.scene.end_scene()
         self.scene = self.loader.load_scene('assets/level02.json')
+        self.scene.dump()
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
         eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_GAME_OVER, self)
@@ -76,9 +76,17 @@ class Game:
     def handle_event(self, event, **kwargs):
         print("GAME onEvent ", event)
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
+            self.scene.end_scene()
             self.scene = self.loader.load_scene('assets/gameover.json')
             self.state.scene = self.scene
             self.state.state = gamestate.STATE_GAMEOVER
+            # XXX setup callback
+            self.scene.ok_btn.on_press_handler = partial(self.on_gameover_ok_pressed)
+
+    def on_gameover_ok_pressed(self, obj):
+        print("OK Button is Pressed on gameover scene!")
+        self.scene.end_scene()
+        sys.exit(0)
 
     def run(self):
         last_ticks = pygame.time.get_ticks()

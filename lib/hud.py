@@ -1,10 +1,6 @@
 import pygame
 from lib.groupobject import GroupObject
-from lib import utilities
-from lib.textobject import Text
 from lib import eventmanager
-from lib import constants
-from lib import sceneloader
 
 
 class Hud(GroupObject):
@@ -44,11 +40,3 @@ class Hud(GroupObject):
         if event.code == eventmanager.GAMEEVENT_LIVES_CHANGED:
             _state = self.game.get_state()
             self.lives.set_text("Lives: {}".format(_state.lives), True)
-
-    def draw(self, surface):
-        # first draw the background
-        # XXX make some assumptions?
-        if self.location == "top":
-            size = self.scene.get_size()
-            pygame.draw.line(surface, self.color, [0, self.height/2], [size[0], self.height/2], self.height)
-        super().draw(surface)

@@ -9,8 +9,12 @@ class GroupObject(GameObject):
         self.layered_game_objects = []
         self.remove_stack = []
 
+    def dump(self):
+        print(self)
+        for obj in self.game_objects:
+            obj.dump()
+
     def add_object(self, obj):
-        print("Adding ", obj)
         self.game_objects.append(obj)
         obj.set_parent(self)
 
@@ -67,6 +71,6 @@ class GroupObject(GameObject):
         if self.background_image:
             self.background_image.draw(surface)
         else:
-            surface.fill(self.background_color)
+            surface.fill(self.background_color, self.bounds)
         for obj in self.game_objects:
             obj.draw(surface)

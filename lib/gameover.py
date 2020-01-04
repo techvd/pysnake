@@ -13,9 +13,5 @@ class GameOverScene(scene.Scene):
         super().load_props(scene_loader, props)
         if props is not None:
             if 'button' in props:
-                ok_btn = scene_loader.create_node('button', props['button'])
-                self.add_object(ok_btn)
-                ok_btn.on_press_handler = partial(self.on_ok_pressed)
-
-    def on_ok_pressed(self, obj):
-        print("OK Button is Pressed!")
+                self.ok_btn = scene_loader.create_node('button', props['button'])
+                self.add_object(self.ok_btn)

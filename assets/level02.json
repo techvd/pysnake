@@ -9,13 +9,13 @@
       "top": 48,
       "right": 32,
       "bottom": 32,
-      "color": "200, 200, 200"
+      "color": "0, 200, 0"
     }
   },
   "hud": {
     "location": "top",
     "height": 48,
-    "background_color": "200, 200, 200",
+    "background_color": "200, 0, 0",
     "score": {
       "font": "",
       "weight": 30,

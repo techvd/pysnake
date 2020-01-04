@@ -45,7 +45,7 @@ class EventManager(object):
         self.event_listeners.remove(event)
 
     def raise_event(self, event, **kwargs):
-        print("Raising event ", event)
+        #print("Raising event ", event)
         pygame.event.post(pygame.event.Event(GAMEEVENT, code=event, **kwargs))
 
     def handle_event(self, event, **kwargs):
@@ -57,13 +57,13 @@ class EventManager(object):
             return
         if event.type == GAMEEVENT:
             code = event.code
-            print("EventManager handle_event code ", code)
+            #print("EventManager handle_event code ", code)
             if event.code not in self.event_listeners:
                 return
             table = self.event_listeners[event.code]
             for listener in table:
-                print("Send off to listener... ", listener)
-                listener.handle_event(event, )
+                #print("Send off to listener... ", listener)
+                listener.handle_event(event)
 
     def schedule(self, millis, callback):
         self.timer_callback = callback

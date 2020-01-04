@@ -21,7 +21,7 @@ class Text(gameobject.GameObject):
         self.font = pygame.font.Font(None, _weight)
         self.color = utilities.parse_color(props['color'])
 
-    def set_text(self, text, adjust = False):
+    def set_text(self, text, adjust=False):
         self.text = text
         self.pygame_object = self.font.render(self.text, 1, self.color)
         self.bounds = self.pygame_object.get_rect()
@@ -38,3 +38,7 @@ class Text(gameobject.GameObject):
             _x = _pb.right - self.bounds.width - 5 # just for spacing
             _y = _pb.top + (_pb.height - self.bounds.height) / 2
         self.move_to(_x, _y)
+
+    def draw(self, surface):
+        #print("TEXT drawing ", self.text, " at ", self.position)
+        super().draw(surface)
