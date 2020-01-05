@@ -44,7 +44,7 @@ class SceneLoader:
         elif key == 'button':
             print("Loader Creating gui button...")
             obj = gui.GUIButton(self.game)
-        elif key == 'score' or key == 'lives' or key == 'text': # TODO generalize this
+        elif key.startswith('text_'):
             print("Loader: Creating text...")
             obj = textobject.Text(self.game)
         if obj:

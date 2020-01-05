@@ -16,13 +16,13 @@
     "location": "top",
     "height": 48,
     "background_color": "200, 0, 0",
-    "score": {
+    "text_score": {
       "font": "",
       "weight": 30,
       "color": "0, 0, 200",
       "hanchor": "left"
     },
-    "lives": {
+    "text_lives": {
       "font": "",
       "weight": 30,
       "color": "0, 200, 0",

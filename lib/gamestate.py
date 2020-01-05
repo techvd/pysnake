@@ -12,6 +12,7 @@ class GameState:
     def __init__(self):
         self.lives = 3
         self.score = 0
+        self.bonus = 0
         self.state = None
         self.scene = None
         self.paused = False
@@ -25,11 +26,11 @@ class GameState:
     def finalize_score(self):
         if self.lives == 3:
             # all lives left
-            self.score += 5000
+            self.bonus = 5000
         elif self.lives == 2:
-            self.score += 3000
+            self.bonus = 3000
         elif self.lives == 1:
-            self.score += 1000
+            self.bonus = 1000
         eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_SCORE_CHANGED)
 
     def update_lives(self, delta):
