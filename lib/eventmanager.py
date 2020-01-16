@@ -15,25 +15,21 @@ GAMEEVENT_TOUCH_OBJECT = 21
 GAMEEVENT_GAME_OVER = 101
 
 
-class EventManager(object):
-    __instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            print("Creating EM")
-            cls.__instance = super(EventManager, cls).__new__(cls)
-            cls.event_listeners = {}
-            cls.timer_callback = None
-        return cls.__instance
+class EventManager:
+    def __init__(self, game):
+        self.game = game
+        self.logger = game.get_logger()
+        self.event_listeners = {}
+        self.timer_callback = None
 
     def add_event_listener(self, event, listener):
         if event in self.event_listeners:
             # existing entry
-            print("EM: adding to existing listener")
+            self.logger.debug("EM: adding to existing listener")
             table = self.event_listeners.get(event)
             table.append(listener)
         else:
-            print("EM: setting up new listener")
+            self.logger.debug("EM: setting up new listener")
             table = [listener]
             self.event_listeners[event] = table
 

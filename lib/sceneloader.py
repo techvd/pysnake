@@ -16,6 +16,8 @@ from lib import background
 class SceneLoader:
     def __init__(self, game):
         self.game = game
+        self.logger = game.get_logger()
+        self.event_manager = game.get_event_manager()
         self.scene = None
 
     def get_game(self):
@@ -27,51 +29,51 @@ class SceneLoader:
     def create_node(self, key, node):
         obj = None
         if key == 'layout':
-            print("Loader: Creating layout...")
+            self.logger.debug("Loader: Creating layout...")
             obj = layout.Layout()
         elif key == 'background':
-            print("Loader: Creating background...")
+            self.logger.debug("Loader: Creating background...")
             obj = background.Background(self.game)
         elif key == 'hud':
-            print("Loader: Creating hud...")
+            self.logger.debug("Loader: Creating hud...")
             obj = hud.Hud(self.game)
         elif key == 'food':
-            print("Loader: Creating food...")
+            self.logger.debug("Loader: Creating food...")
             obj = food.Food(self.game)
         elif key == 'snake':
-            print("Loader: Creating snake...")
+            self.logger.debug("Loader: Creating snake...")
             obj = snake.Snake(self.game)
         elif key == 'button':
-            print("Loader Creating gui button...")
+            self.logger.debug("Loader Creating gui button...")
             obj = gui.GUIButton(self.game)
         elif key.startswith('text_'):
-            print("Loader: Creating text...")
+            self.logger.debug("Loader: Creating text...")
             obj = textobject.Text(self.game)
         if obj:
             obj.load_props(self, node)
             return obj
         else:
-            print("Loader: unrecognized tag in create_node: ", key)
+            self.logger.debug("Loader: unrecognized tag in create_node: ", key)
             return None
 
     def load_scene(self, file):
         with open(file) as level_file:
-            print("Loader: Loading from ", file, "...")
+            self.logger.debug("Loader: Loading from ", file, "...")
             _level = json.load(level_file)
             # check type first
             _type = _level['type']
             self.scene = None
             if _type == 'splash':
-                print("Loader: Creating splash scene...")
+                self.logger.debug("Loader: Creating splash scene...")
                 self.scene = splash.SplashScene(self.game)
             elif _type == 'gameover':
-                print("Loader: Creating gameover scene...")
+                self.logger.debug("Loader: Creating gameover scene...")
                 self.scene = gameover.GameOverScene(self.game)
             elif _type == 'game':
-                print("Loader: Creating game scene...")
+                self.logger.debug("Loader: Creating game scene...")
                 self.scene = gamescene.GameScene(self.game)
             if self.scene is None:
-                print("E: Cannot create scene from file")
+                self.logger.debug("E: Cannot create scene from file")
                 return None
             self.scene.load_props(self, _level)
             return self.scene

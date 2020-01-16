@@ -1,6 +1,5 @@
 import pygame
 from lib import utilities
-from lib import constants
 
 
 class GameObject:
@@ -10,9 +9,11 @@ class GameObject:
         self.parent = None
         self.pygame_object = None
         self.game = game
+        self.logger = game.get_logger()
+        self.event_manager = game.get_event_manager()
         self.position = [0, 0]
         self.size = [0, 0]
-        self.layer = 0
+        self.layer = 1  # 0 is "reserved" for background
         self.bounds = None
         self.layout = None
         self.active = True
@@ -21,10 +22,10 @@ class GameObject:
         self.frames = 0
 
     def dump(self):
-        print(self)
+        self.logger.info(self)
 
     def get_id(self):
-        self.object_id
+        return self.object_id
 
     def get_parent(self):
         return self.parent
@@ -71,6 +72,7 @@ class GameObject:
                 self.name = props['name']
             if 'id' in props:
                 self.object_id = props['id']
+                self.logger.debug("ID Override: ", self.object_id)
             if 'position' in props:
                 self.position = utilities.parse_2dvec(props['position'])
             if 'size' in props:

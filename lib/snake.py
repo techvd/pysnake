@@ -13,7 +13,7 @@ class Snake(gameobject.GameObject):
         self.direction = constants.DIRECTION_UP
         self.color = constants.WHITE
         self.speed = 50
-        eventmanager.EventManager().add_event_listener(eventmanager.GAMEEVENT_DIRECTION_CHANGE, self)
+        self.event_manager.add_event_listener(eventmanager.GAMEEVENT_DIRECTION_CHANGE, self)
 
     def load_props(self, scene_loader, props):
         super().load_props(scene_loader, props)
@@ -34,7 +34,7 @@ class Snake(gameobject.GameObject):
         self.move_to(self.starting_position[0], self.starting_position[1])
 
     def handle_event(self, event, **kwargs):
-        print("** SNAKE handle_event: ", event)
+        self.logger.debug("** SNAKE handle_event: ", event)
         if event.code == eventmanager.GAMEEVENT_DIRECTION_CHANGE:
             self.set_direction(event.direction)
 
@@ -56,4 +56,4 @@ class Snake(gameobject.GameObject):
         y += dy
         self.position = self.parent.clamp_object_position(self, x, y)
         self.update_bounds()
-        eventmanager.EventManager().raise_event(eventmanager.GAMEEVENT_POSITION_CHANGED)
+        self.event_manager.raise_event(eventmanager.GAMEEVENT_POSITION_CHANGED)

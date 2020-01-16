@@ -11,10 +11,11 @@ class GroupObject(gameobject.GameObject):
         self.background = None
         self.game_objects = []
         self.layered_game_objects = []
+        self.sorted_layers = None
         self.remove_stack = []
 
     def dump(self):
-        print(self)
+        self.logger.debug(self)
         for obj in self.game_objects:
             obj.dump()
 
@@ -25,11 +26,13 @@ class GroupObject(gameobject.GameObject):
                 self.background_color = utilities.parse_color(props['background_color'])
             if 'background' in props:
                 self.background = scene_loader.create_node('background', props['background'])
-                self.add_object(self.background)
+                self.add_child(self.background)
 
-    def add_object(self, obj):
+    def add_child(self, obj):
         self.game_objects.append(obj)
         obj.set_parent(self)
+        # resort objects by layer
+        self.game_objects.sort(key=lambda x: x.layer)
 
     def clamp_object_position(self, obj, x, y):
         obj_bounds = obj.get_bounds()
@@ -45,26 +48,26 @@ class GroupObject(gameobject.GameObject):
 
     def safe_remove(self, obj):
         # just append to stack
-        print("Adding to remove stack: ", obj)
+        self.logger.debug("Adding to remove stack: ", obj)
         self.remove_stack.append(obj)
 
     def dump_game_objects(self):
-        print("BEGIN DUMP")
+        self.logger.debug("BEGIN DUMP")
         for obj in self.game_objects:
-            print(obj)
-        print("END DUMP")
+            obj.dump()
+        self.logger.debug("END DUMP")
 
     def finish_safe_remove(self):
         for obj in self.remove_stack:
             # self.dump_game_objects()
-            print("Removing from stack: ", obj)
+            self.logger.debug("Removing from stack: ", obj)
             self.game_objects.remove(obj)
         self.remove_stack.clear()
 
     def get_object_at(self, x, y):
-        print("get_object_at")
-        for obj in self.game_objects:
-            print("Checking with ", obj)
+        for i in range(len(self.game_objects)-1, -1, -1):
+            obj = self.game_objects[i]
+            self.logger.debug("Checking with ", obj)
             if obj.is_within(x, y):
                 return obj
         if self.is_within(x, y):
@@ -84,5 +87,6 @@ class GroupObject(gameobject.GameObject):
             self.background.draw(surface)
         else:
             surface.fill(self.background_color, self.bounds)
-        for obj in self.game_objects:
-            obj.draw(surface)
+        #for obj in self.game_objects:
+        for i in range(0, len(self.game_objects)):
+            self.game_objects[i].draw(surface)

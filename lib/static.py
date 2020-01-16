@@ -11,5 +11,5 @@ class StaticObject(gameobject.GameObject):
         super().load_props(scene_loader, props)
         _sprite = "assets/" + props['image']
         obj = pygame.image.load(_sprite)
-        self.pygame_object = pygame.transform.smoothscale(obj, [self.size[0], self.size[1]])
+        self.pygame_object = pygame.transform.smoothscale(obj, [self.size[0], self.size[1]]).convert_alpha()
         print("Loaded image")

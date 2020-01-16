@@ -1,7 +1,11 @@
 {
   "name": "Test Level",
   "type": "game",
-  "background_color": "32, 32, 32",
+  "background": {
+    "position": "0, 0",
+    "size": "720, 1280",
+    "image": "main.png"
+  },
   "size": "720, 1280",
   "layout": {
     "border": {
@@ -15,7 +19,8 @@
   "hud": {
     "location": "top",
     "height": 48,
-    "background_color": "200, 0, 0",
+    "background_color": "0, 255, 0",
+    "layer": 10,
     "text_score": {
       "font": "",
       "weight": 30,
@@ -25,7 +30,7 @@
     "text_lives": {
       "font": "",
       "weight": 30,
-      "color": "0, 200, 0",
+      "color": "0, 0, 200",
       "hanchor": "right"
     }
   },
