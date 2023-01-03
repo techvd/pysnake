@@ -3,7 +3,7 @@ import json
 from lib import splash
 from lib import gameover
 from lib import gamescene
-from lib import static
+from lib import staticobject
 from lib import layout
 from lib import snake
 from lib import hud

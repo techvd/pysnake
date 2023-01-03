@@ -7,10 +7,12 @@ from lib import gamestate
 from lib import gameeventhandler
 from lib import eventmanager
 from lib import sceneloader
+from lib import debugscene
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, argv):
+        self.argv = argv
         self.size = 720, 1280
         self.logger = logger.Logger(self)
         self.event_manager = eventmanager.EventManager(self)
@@ -22,10 +24,15 @@ class Game:
         self.state = gamestate.GameState(self)
         self.handler = gameeventhandler.GameEventHandler(self)
         self.loader = sceneloader.SceneLoader(self)
-        self.scene = self.loader.load_scene('assets/splash01.json')
+        self.scene = self.loader.load_scene('assets/screens/splash01.json')
+        # self.scene = debugscene.DebugScene(self)
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
         self.event_manager.schedule(1000, partial(self.continueSplash))
+        self.process_args()
+
+    def process_args(self):
+        pass
 
     def get_logger(self):
         return self.logger
@@ -61,7 +68,7 @@ class Game:
     def continueSplash(self):
         self.logger.info("Continue from Splash...")
         self.scene.end_scene()
-        self.scene = self.loader.load_scene('assets/level02.json')
+        self.scene = self.loader.load_scene('assets/levels/level03.json')
         self.scene.dump()
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
@@ -82,7 +89,7 @@ class Game:
         self.logger.info("GAME onEvent ", event)
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
             self.scene.end_scene()
-            self.scene = self.loader.load_scene('assets/gameover.json')
+            self.scene = self.loader.load_scene('assets/screens/gameover.json')
             self.state.scene = self.scene
             self.state.state = gamestate.STATE_GAMEOVER
             # XXX setup callback

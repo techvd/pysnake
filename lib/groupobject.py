@@ -1,3 +1,5 @@
+import pygame
+
 from lib import gameobject
 from lib import constants
 from lib import utilities
@@ -7,6 +9,7 @@ class GroupObject(gameobject.GameObject):
     def __init__(self, game):
         super().__init__(game)
         self.ignore_events = False
+        self.has_background = True
         self.background_color = constants.BLACK
         self.background = None
         self.game_objects = []
@@ -83,10 +86,33 @@ class GroupObject(gameobject.GameObject):
     def draw(self, surface):
         if not self.visible:
             return
-        if self.background:
-            self.background.draw(surface)
-        else:
-            surface.fill(self.background_color, self.bounds)
-        #for obj in self.game_objects:
+        if self.has_background:
+            if self.background:
+                self.background.draw(surface)
+            else:
+                surface.fill(self.background_color, self.bounds)
+        # for obj in self.game_objects:
         for i in range(0, len(self.game_objects)):
             self.game_objects[i].draw(surface)
+
+    def do_fade(self, _from, _to):
+        _incr = 8
+        if _from > _to:
+            _incr = -8
+        _w = self.size[0]
+        _h = self.size[1]
+        print(_w, _h)
+        _fade = pygame.Surface((_w, _h))
+        _fade.fill((0, 0, 0))
+        for alpha in range(_from, _to, _incr):
+            _fade.set_alpha(alpha)
+            self.draw()
+            self.screen.blit(_fade, (0, 0))
+            pygame.display.update()
+            pygame.time.delay(30)
+
+    def fade_out(self):
+        self.do_fade(0, 160)
+
+    def fade_in(self):
+        self.do_fade(160, 0)

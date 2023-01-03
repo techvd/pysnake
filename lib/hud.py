@@ -6,6 +6,7 @@ from lib import eventmanager
 class Hud(GroupObject):
     def __init__(self, game):
         super().__init__(game)
+        self.has_background = False
         self.location = ''
         self.height = 0
         self.score = None

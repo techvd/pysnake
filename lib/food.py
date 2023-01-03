@@ -1,8 +1,8 @@
-from lib import static
+from lib import staticobject
 from lib import utilities
 
 
-class Food(static.StaticObject):
+class Food(staticobject.StaticObject):
     def __init__(self, game):
         super().__init__(game)
         self.score = 0

@@ -1,0 +1,67 @@
+{
+  "name": "Test Level",
+  "type": "game",
+  "background": {
+    "position": "0, 0",
+    "size": "720, 1280",
+    "image": "main"
+  },
+  "size": "720, 1280",
+  "layout": {
+    "border": {
+      "left": 32,
+      "top": 48,
+      "right": 32,
+      "bottom": 32,
+      "color": "0, 200, 0"
+    }
+  },
+  "hud": {
+    "location": "top",
+    "height": 48,
+    "background_color": "128, 91, 73",
+    "layer": 10,
+    "text_score": {
+      "font": "",
+      "weight": 30,
+      "color": "225, 225, 225",
+      "hanchor": "left"
+    },
+    "text_lives": {
+      "font": "",
+      "weight": 30,
+      "color": "225, 225, 225",
+      "hanchor": "right"
+    }
+  },
+  "snake": {
+    "position": "340, 600",
+    "speed": 50
+  },
+  "food_items": [
+    {
+      "position": "100, 100",
+      "image": "food",
+      "score": 50
+    },
+    {
+      "position": "203, 293",
+      "image": "food",
+      "score": 50
+    },
+    {
+      "position": "400, 100",
+      "image": "food",
+      "score": 50
+    },
+    {
+      "position": "200, 400",
+      "image": "food",
+      "score": 50
+    },
+    {
+      "position": "300, 600",
+      "image": "food",
+      "score": 50
+    }  ]
+}

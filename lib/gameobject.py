@@ -1,5 +1,7 @@
 import pygame
 from lib import utilities
+from lib import debugger
+from lib import constants
 
 
 class GameObject:
@@ -38,6 +40,10 @@ class GameObject:
 
     def get_size(self):
         return self.size
+
+    def set_size(self, size):
+        self.size = size
+        self.update_bounds()
 
     def get_bounds(self):
         return self.bounds
@@ -104,3 +110,5 @@ class GameObject:
             return
         if self.pygame_object:
             surface.blit(self.pygame_object, self.bounds)
+        if debugger.drawBounds():
+            pygame.draw.rect(surface, constants.GREEN, self.bounds, 2)

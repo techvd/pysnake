@@ -1,9 +1,9 @@
 from lib import groupobject
-from lib import static
+from lib import staticobject
 from lib import eventmanager
 
 
-class GUIButton(static.StaticObject):
+class GUIButton(staticobject.StaticObject):
     def __init__(self, game):
         super().__init__(game)
         self.on_press_handler = None

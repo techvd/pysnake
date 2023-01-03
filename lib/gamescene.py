@@ -1,12 +1,12 @@
 import pygame
 from functools import partial
 
-from lib import scene
+from lib import tilescene
 from lib import utilities
 from lib import eventmanager
 
 
-class GameScene(scene.Scene):
+class GameScene(tilescene.TileScene):
     def __init__(self, game):
         super().__init__(game)
         self.snake = None
@@ -18,12 +18,17 @@ class GameScene(scene.Scene):
         super().load_props(scene_loader, props)
         if props is not None:
             if 'snake' in props:
-                snake_obj = scene_loader.create_node('snake', props['snake'])
+                node = props['snake']
+                # inject size
+                node['size'] = [self.htile_size, self.vtile_size]
+                snake_obj = scene_loader.create_node('snake', node)
                 self.setupPlayer(snake_obj)
             if 'food_items' in props:
                 _food_nodes = props['food_items']
                 self.logger.debug("Foods: #{}".format(len(_food_nodes)))
                 for node in _food_nodes:
+                    # inject size
+                    node['size'] = [self.htile_size, self.vtile_size]
                     food_obj = scene_loader.create_node('food', node)
                     self.add_food(food_obj)
 

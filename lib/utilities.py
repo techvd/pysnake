@@ -8,6 +8,8 @@ def parse_value(prop):
 
 
 def parse_2dvec(prop):
+    if isinstance(prop, list):
+        return prop
     xy = prop.split(',')
     x = int(xy[0])
     y = int(xy[1])
@@ -15,6 +17,8 @@ def parse_2dvec(prop):
 
 
 def parse_3dvec(prop):
+    if isinstance(prop, list):
+        return prop
     xyz = prop.split(',')
     x = int(xyz[0])
     y = int(xyz[1])

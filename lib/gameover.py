@@ -1,9 +1,9 @@
 from functools import partial
 
-from lib import scene
+from lib import tilescene
 
 
-class GameOverScene(scene.Scene):
+class GameOverScene(tilescene.TileScene):
     def __init__(self, game):
         super().__init__(game)
         self.ok_btn = None

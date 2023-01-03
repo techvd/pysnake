@@ -1,0 +1,2 @@
+def drawBounds():
+    return True
