@@ -81,7 +81,7 @@ class GameObject:
                 self.name = props['name']
             if 'id' in props:
                 self.object_id = props['id']
-                logging.debug("ID Override: ", self.object_id)
+                logging.debug(f"ID Override: {self.object_id}")
             if 'position' in props:
                 self.position = utilities.parse_2dvec(props['position'])
             if 'size' in props:

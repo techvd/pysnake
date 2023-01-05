@@ -56,7 +56,7 @@ class GroupObject(gameobject.GameObject):
 
     def safe_remove(self, obj):
         # just append to stack
-        logging.debug("Adding to remove stack: ", obj)
+        logging.debug(f"Adding to remove stack: {obj}")
         self.remove_stack.append(obj)
 
     def dump_game_objects(self):
@@ -68,14 +68,14 @@ class GroupObject(gameobject.GameObject):
     def finish_safe_remove(self):
         for obj in self.remove_stack:
             # self.dump_game_objects()
-            logging.debug("Removing from stack: ", obj)
+            logging.debug(f"Removing from stack: {obj}")
             self.game_objects.remove(obj)
         self.remove_stack.clear()
 
     def get_object_at(self, x, y):
         for i in range(len(self.game_objects)-1, -1, -1):
             obj = self.game_objects[i]
-            logging.debug("Checking with ", obj)
+            logging.debug(f"Checking with {obj}...")
             sub_obj = obj.get_object_at(x, y)
             if sub_obj is not None:
                 return sub_obj

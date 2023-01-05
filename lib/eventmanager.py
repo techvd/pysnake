@@ -41,7 +41,7 @@ class EventManager:
         self.event_listeners.remove(event)
 
     def raise_event(self, event, **kwargs):
-        logging.debug("Raising event ", event)
+        # logging.debug(f"Raising event {event}")
         pygame.event.post(pygame.event.Event(GAMEEVENT, code=event, **kwargs))
 
     def handle_event(self, event, **kwargs):

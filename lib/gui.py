@@ -16,8 +16,7 @@ class GUIButton(staticobject.StaticObject):
         logging.debug("Button handle_event")
         self.dump()
         if event.code == eventmanager.GAMEEVENT_TOUCH_OBJECT:
-            logging.debug("Sender: ", event.object.get_id())
-            logging.debug("Me: ", self.get_id())
+            logging.debug(f"Sender: {event.object.get_id()}, Me: {self.get_id()}")
             if event.object.get_id() == self.get_id():
                 self.on_press_handler(self)
 

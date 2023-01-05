@@ -64,7 +64,7 @@ class SceneLoader:
 
     def load_scene(self, file):
         with open(file) as level_file:
-            logging.debug("Loader: Loading from ", file, "...")
+            logging.debug(f"Loader: Loading from {file}...")
             _level = json.load(level_file)
             # check type first
             _type = _level['type']

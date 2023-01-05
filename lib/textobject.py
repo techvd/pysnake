@@ -42,7 +42,6 @@ class Text(gameobject.GameObject):
             self.move_to(_x, _y)
         else:
             _pb = self.parent.get_bounds()
-            logging.debug("PB: ", _pb)
             if self.hanchor == 'left':
                 _x = _pb.left + 5 # just for spacing
             elif self.hanchor == 'right':

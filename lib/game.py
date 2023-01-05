@@ -1,7 +1,8 @@
 import sys
 import logging
-import pygame
+import argparse
 from functools import partial
+import pygame
 
 from lib import gamestate
 from lib import gameeventhandler
@@ -10,12 +11,19 @@ from lib import sceneloader
 from lib import debugscene
 
 
+FORMAT_STRING = '%(asctime)s %(message)s'
 LEVEL_FILE = 'assets/levels/level04.json'
 
 
 class Game:
     def __init__(self, argv):
-        self.argv = argv
+        self.arguments = self.process_args()
+        if self.arguments.debug:
+            print("Turning on debug logging")
+            logging.basicConfig(format=FORMAT_STRING, level=logging.DEBUG)
+        else:
+            logging.basicConfig(format=FORMAT_STRING, level=logging.WARNING)
+
         self.size = 720, 1280
         self.event_manager = eventmanager.EventManager(self)
         pygame.init()
@@ -32,10 +40,12 @@ class Game:
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
         self.event_manager.schedule(1000, partial(self.continueSplash))
-        self.process_args()
 
     def process_args(self):
-        pass
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--version", action="store_true", help="Display version")
+        parser.add_argument("--debug", action="store_true", help="Turn on debug mode")
+        return parser.parse_args()
 
     def get_event_manager(self):
         return self.event_manager
@@ -85,7 +95,7 @@ class Game:
         callback()
 
     def handle_event(self, event, **kwargs):
-        logging.debug("GAME onEvent ", event)
+        logging.debug(f"GAME onEvent {event}")
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
             self.scene.end_scene()
             self.scene = self.loader.load_scene('assets/screens/gameover.json')

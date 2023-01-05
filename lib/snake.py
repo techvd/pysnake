@@ -36,7 +36,7 @@ class Snake(gameobject.GameObject):
         self.move_to(self.starting_position[0], self.starting_position[1])
 
     def handle_event(self, event, **kwargs):
-        logging.debug("** SNAKE handle_event: ", event)
+        logging.debug(f"** SNAKE handle_event: {event}...")
         if event.code == eventmanager.GAMEEVENT_DIRECTION_CHANGE:
             self.set_direction(event.direction)
 
