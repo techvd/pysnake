@@ -14,4 +14,3 @@ class PhysicsObject(gameobject.GameObject):
     def update(self, dt):
         self.position[0] += self.speed[0] * dt
         self.position[1] += self.speed[1] * dt
-        # print("New POS ", self.position)

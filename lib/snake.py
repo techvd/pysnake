@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 from lib import gameobject
@@ -9,9 +10,10 @@ from lib import eventmanager
 class Snake(gameobject.GameObject):
     def __init__(self, game):
         super().__init__(game)
+        self.name = "SNAKE"
         self.starting_position = [0, 0]
         self.direction = constants.DIRECTION_UP
-        self.color = constants.WHITE
+        self.color = constants.GREEN
         self.speed = 50
         self.event_manager.add_event_listener(eventmanager.GAMEEVENT_DIRECTION_CHANGE, self)
 
@@ -34,7 +36,7 @@ class Snake(gameobject.GameObject):
         self.move_to(self.starting_position[0], self.starting_position[1])
 
     def handle_event(self, event, **kwargs):
-        self.logger.debug("** SNAKE handle_event: ", event)
+        logging.debug("** SNAKE handle_event: ", event)
         if event.code == eventmanager.GAMEEVENT_DIRECTION_CHANGE:
             self.set_direction(event.direction)
 

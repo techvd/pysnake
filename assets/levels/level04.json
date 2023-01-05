@@ -9,30 +9,33 @@
   "size": "720, 1280",
   "layout": {
     "border": {
-      "left": 32,
-      "top": 48,
-      "right": 32,
-      "bottom": 32,
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
       "color": "0, 200, 0"
     }
   },
   "hud": {
-    "location": "top",
-    "height": 48,
+    "anchor": "top",
+    "height": "48",
     "background_color": "128, 91, 73",
-    "layer": 10,
-    "text_score": {
-      "font": "",
-      "weight": 30,
-      "color": "225, 225, 225",
-      "hanchor": "left"
-    },
-    "text_lives": {
-      "font": "",
-      "weight": 30,
-      "color": "225, 225, 225",
-      "hanchor": "right"
-    }
+    "elements": [
+      {
+        "name": "text_score",
+        "type": "text",
+        "weight": 30,
+        "color": "255, 255, 255",
+        "hanchor": "left"
+      },
+      {
+        "name": "text_lives",
+        "type": "text",
+        "weight": 38,
+        "color": "255, 255, 255",
+        "hanchor": "right"
+      }
+    ]
   },
   "snake": {
     "position": "10, 10",
@@ -74,6 +77,11 @@
     {
       "position": "4, 26",
       "size": "10, 1",
+      "color": "225, 225, 225"
+    },
+    {
+      "position": "2, 32",
+      "size": "1, 10",
       "color": "225, 225, 225"
     }
   ]

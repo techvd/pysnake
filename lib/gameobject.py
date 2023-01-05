@@ -1,4 +1,5 @@
 import pygame
+import logging
 from lib import utilities
 from lib import debugger
 from lib import constants
@@ -11,7 +12,6 @@ class GameObject:
         self.parent = None
         self.pygame_object = None
         self.game = game
-        self.logger = game.get_logger()
         self.event_manager = game.get_event_manager()
         self.position = [0, 0]
         self.size = [0, 0]
@@ -24,7 +24,7 @@ class GameObject:
         self.frames = 0
 
     def dump(self):
-        self.logger.info(self)
+        logging.debug(f"{self.name} at {self.position} size {self.size} bounds {self.bounds}")
 
     def get_id(self):
         return self.object_id
@@ -72,13 +72,16 @@ class GameObject:
     def set_layer(self, layer):
         self.layer = layer
 
+    def is_container(self):
+        return False
+
     def load_props(self, scene_loader, props):
         if props is not None:
             if 'name' in props:
                 self.name = props['name']
             if 'id' in props:
                 self.object_id = props['id']
-                self.logger.debug("ID Override: ", self.object_id)
+                logging.debug("ID Override: ", self.object_id)
             if 'position' in props:
                 self.position = utilities.parse_2dvec(props['position'])
             if 'size' in props:
@@ -96,6 +99,11 @@ class GameObject:
 
     def is_within(self, x, y):
         return self.bounds.collidepoint(x, y)
+
+    def get_object_at(self, x, y):
+        if self.is_within(x, y):
+            return self
+        return None
 
     def move_to(self, x, y):
         self.position[0] = x

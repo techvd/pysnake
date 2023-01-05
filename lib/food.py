@@ -5,6 +5,7 @@ from lib import utilities
 class Food(staticobject.StaticObject):
     def __init__(self, game):
         super().__init__(game)
+        self.name = "FOOD"
         self.score = 0
 
     def load_props(self, scene_loader, props):

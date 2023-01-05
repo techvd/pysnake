@@ -20,7 +20,5 @@ class Tween:
             return
         self.elapsed_dt += dt
         self.current_value += (self.to_value - self.from_value) * (self.duration / self.elapsed_dt)
-        print("Tween: ", self.current_value)
         if self.current_value >= self.to_value:
-            print("Tween done")
             self.done = True

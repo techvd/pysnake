@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 
@@ -18,18 +19,17 @@ GAMEEVENT_GAME_OVER = 101
 class EventManager:
     def __init__(self, game):
         self.game = game
-        self.logger = game.get_logger()
         self.event_listeners = {}
         self.timer_callback = None
 
     def add_event_listener(self, event, listener):
         if event in self.event_listeners:
             # existing entry
-            self.logger.debug("EM: adding to existing listener")
+            logging.debug("EM: adding to existing listener")
             table = self.event_listeners.get(event)
             table.append(listener)
         else:
-            self.logger.debug("EM: setting up new listener")
+            logging.debug("EM: setting up new listener")
             table = [listener]
             self.event_listeners[event] = table
 
@@ -41,7 +41,7 @@ class EventManager:
         self.event_listeners.remove(event)
 
     def raise_event(self, event, **kwargs):
-        #print("Raising event ", event)
+        logging.debug("Raising event ", event)
         pygame.event.post(pygame.event.Event(GAMEEVENT, code=event, **kwargs))
 
     def handle_event(self, event, **kwargs):
@@ -53,12 +53,10 @@ class EventManager:
             return
         if event.type == GAMEEVENT:
             code = event.code
-            #print("EventManager handle_event code ", code)
             if event.code not in self.event_listeners:
                 return
             table = self.event_listeners[event.code]
             for listener in table:
-                #print("Send off to listener... ", listener)
                 listener.handle_event(event)
 
     def schedule(self, millis, callback):

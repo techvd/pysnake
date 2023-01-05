@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 from lib import gameobject
@@ -7,6 +8,7 @@ from lib import utilities
 class Text(gameobject.GameObject):
     def __init__(self, game):
         super().__init__(game)
+        self.name = "TEXT"
         self.anchor = None
         self.hanchor = 'left'
         self.vanchor = 'center'
@@ -40,7 +42,7 @@ class Text(gameobject.GameObject):
             self.move_to(_x, _y)
         else:
             _pb = self.parent.get_bounds()
-            self.logger.debug("PB: ", _pb)
+            logging.debug("PB: ", _pb)
             if self.hanchor == 'left':
                 _x = _pb.left + 5 # just for spacing
             elif self.hanchor == 'right':
@@ -52,5 +54,4 @@ class Text(gameobject.GameObject):
             self.move_to(_x, _y)
 
     def draw(self, surface):
-        #print("TEXT drawing ", self.text, " at ", self.position)
         super().draw(surface)

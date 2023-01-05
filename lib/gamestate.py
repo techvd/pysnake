@@ -11,7 +11,6 @@ STATE_OPTIONS = 11
 class GameState:
     def __init__(self, game):
         self.game = game
-        self.logger = game.get_logger()
         self.event_manager = game.get_event_manager()
         self.lives = 1
         self.score = 0

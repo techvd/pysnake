@@ -6,7 +6,6 @@ from lib import eventmanager
 class GameEventHandler:
     def __init__(self, game):
         self.game = game
-        self.logger = game.get_logger()
         self.event_manager = game.get_event_manager()
 
     def handle_event(self, event, **kwargs):
@@ -27,6 +26,5 @@ class GameEventHandler:
             _scene = self.game.get_scene()
             _obj = _scene.get_object_at(event.pos[0], event.pos[1])
             if _obj is not None:
-                print("Mouse Pressed on ", _obj)
                 self.event_manager.raise_event(eventmanager.GAMEEVENT_TOUCH_OBJECT,
                                                         object=_obj)

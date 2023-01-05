@@ -1,3 +1,4 @@
+import logging
 import pygame
 
 from lib import gameobject
@@ -8,6 +9,7 @@ from lib import utilities
 class GroupObject(gameobject.GameObject):
     def __init__(self, game):
         super().__init__(game)
+        self.name = "GROUP"
         self.ignore_events = False
         self.has_background = True
         self.background_color = constants.BLACK
@@ -18,9 +20,12 @@ class GroupObject(gameobject.GameObject):
         self.remove_stack = []
 
     def dump(self):
-        self.logger.debug(self)
+        super().dump()
         for obj in self.game_objects:
             obj.dump()
+
+    def is_container(self):
+        return True
 
     def load_props(self, scene_loader, props):
         super().load_props(scene_loader, props)
@@ -51,28 +56,29 @@ class GroupObject(gameobject.GameObject):
 
     def safe_remove(self, obj):
         # just append to stack
-        self.logger.debug("Adding to remove stack: ", obj)
+        logging.debug("Adding to remove stack: ", obj)
         self.remove_stack.append(obj)
 
     def dump_game_objects(self):
-        self.logger.debug("BEGIN DUMP")
+        logging.debug("BEGIN DUMP")
         for obj in self.game_objects:
             obj.dump()
-        self.logger.debug("END DUMP")
+        logging.debug("END DUMP")
 
     def finish_safe_remove(self):
         for obj in self.remove_stack:
             # self.dump_game_objects()
-            self.logger.debug("Removing from stack: ", obj)
+            logging.debug("Removing from stack: ", obj)
             self.game_objects.remove(obj)
         self.remove_stack.clear()
 
     def get_object_at(self, x, y):
         for i in range(len(self.game_objects)-1, -1, -1):
             obj = self.game_objects[i]
-            self.logger.debug("Checking with ", obj)
-            if obj.is_within(x, y):
-                return obj
+            logging.debug("Checking with ", obj)
+            sub_obj = obj.get_object_at(x, y)
+            if sub_obj is not None:
+                return sub_obj
         if self.is_within(x, y):
             return self
         return None
@@ -80,6 +86,7 @@ class GroupObject(gameobject.GameObject):
     def update(self, dt):
         if self.ignore_events:
             return
+        super().update(dt)
         for obj in self.game_objects:
             obj.update(dt)
 
@@ -101,7 +108,6 @@ class GroupObject(gameobject.GameObject):
             _incr = -8
         _w = self.size[0]
         _h = self.size[1]
-        print(_w, _h)
         _fade = pygame.Surface((_w, _h))
         _fade.fill((0, 0, 0))
         for alpha in range(_from, _to, _incr):
