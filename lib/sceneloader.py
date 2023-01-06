@@ -6,7 +6,6 @@ from lib import gameover
 from lib import gamescene
 from lib import layout
 from lib import snake
-from lib import hud
 from lib import textobject
 from lib import food
 from lib import wall
@@ -34,9 +33,6 @@ class SceneLoader:
         elif key == 'background':
             logging.debug("Loader: Creating background...")
             obj = background.Background(self.game)
-        elif key == 'hud':
-            logging.debug("Loader: Creating hud...")
-            obj = hud.Hud(self.game)
         elif key == 'food':
             logging.debug("Loader: Creating food...")
             obj = food.Food(self.game)

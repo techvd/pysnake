@@ -7,6 +7,8 @@
     "image": "main"
   },
   "size": "720, 1280",
+  "tile_size": "40, 40",
+  "tiles": "32, 10",
   "layout": {
     "border": {
       "left": 0,
@@ -19,20 +21,20 @@
   "hud": {
     "anchor": "top",
     "height": "48",
-    "background_color": "128, 91, 73",
+    "background_color": "128, 91, 73, 32",
     "elements": [
       {
         "name": "text_score",
         "type": "text",
         "weight": 30,
-        "color": "255, 255, 255",
+        "color": "0, 127, 0",
         "hanchor": "left"
       },
       {
         "name": "text_lives",
         "type": "text",
         "weight": 38,
-        "color": "255, 255, 255",
+        "color": "0, 128, 0",
         "hanchor": "right"
       }
     ]

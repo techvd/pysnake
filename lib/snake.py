@@ -12,6 +12,7 @@ class Snake(gameobject.GameObject):
         super().__init__(game)
         self.name = "SNAKE"
         self.starting_position = [0, 0]
+        self.tiles = []
         self.direction = constants.DIRECTION_UP
         self.color = constants.GREEN
         self.speed = 50
@@ -19,15 +20,21 @@ class Snake(gameobject.GameObject):
 
     def load_props(self, scene_loader, props):
         super().load_props(scene_loader, props)
-        if props is not None:
-            if 'speed' in props:
-                self.speed = utilities.parse_value(props['speed'])
-            if 'color' in props:
-                self.color = utilities.parse_color(props['color'])
+        if 'speed' in props:
+            self.speed = utilities.parse_value(props['speed'])
+        if 'color' in props:
+            self.color = utilities.parse_color(props['color'])
         self.starting_position = self.position
+        tile = props['tile_position']
+        self.tiles.append(tile)
+        self.tiles.append([tile[0]+1, tile[1]])
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.bounds)
+        # pygame.draw.rect(surface, self.color, self.bounds)
+        for i in range(len(self.tiles)):
+            tile = self.tiles[i]
+            bounds = self.game.get_scene().get_tile_bounds(tile[0], tile[1])
+            pygame.draw.rect(surface, self.color, bounds)
 
     def set_direction(self, direction):
         self.direction = direction
@@ -41,6 +48,7 @@ class Snake(gameobject.GameObject):
             self.set_direction(event.direction)
 
     def update(self, dt):
+        # return
         if not self.active:
             return
         dx = dy = 0

@@ -116,6 +116,7 @@ class GameObject:
     def draw(self, surface):
         if not self.visible:
             return
+        # print(f"\t{self.name} DRAW")
         if self.pygame_object:
             surface.blit(self.pygame_object, self.bounds)
         if debugger.drawBounds():

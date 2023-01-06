@@ -27,8 +27,16 @@ def parse_3dvec(prop):
 
 
 def parse_color(prop):
-    _color = parse_3dvec(prop)
-    return pygame.Color(_color[0], _color[1], _color[2])
+    if isinstance(prop, list):
+        return prop
+    parts = prop.split(',')
+    x = int(parts[0])
+    y = int(parts[1])
+    z = int(parts[2])
+    a = 255
+    if len(parts) > 3:
+        a = int(parts[3])
+    return pygame.Color(x, y, z, a)
 
 
 def intersects(src, dest):

@@ -1,4 +1,7 @@
 import logging
+
+import pygame
+
 from lib import groupobject
 from lib import staticobject
 from lib import eventmanager
@@ -29,6 +32,7 @@ class GUIPanel(groupobject.GroupObject):
     def __init__(self, game):
         super().__init__(game)
         self.name = "PANEL"
+        self.surface = None
         self.height = 0
         self.elementMap = {}
 
@@ -41,12 +45,18 @@ class GUIPanel(groupobject.GroupObject):
             if obj is not None:
                 self.elementMap[key] = obj
                 self.add_child(obj)
+        # print(f"***panel making surface of {self.size}")
+        self.surface = pygame.Surface(self.size, pygame.SRCALPHA).convert_alpha()
 
     def getAnchor(self):
         return self.anchor
 
     def getElement(self, name):
         return self.elementMap[name]
+
+    def draw(self, surface):
+        super().draw(self.surface)
+        surface.blit(self.surface, self.position) # , special_flags=pygame.BLEND_ADD)
 
 
 class GUIManager(groupobject.GroupObject):

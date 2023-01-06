@@ -1,8 +1,8 @@
 import logging
-from lib import tilescene
+from lib import basescene
 
 
-class GameOverScene(tilescene.TileScene):
+class GameOverScene(basescene.BaseScene):
     def __init__(self, game):
         super().__init__(game)
         self.name = "GAMEOVER"

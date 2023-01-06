@@ -29,12 +29,11 @@ class GroupObject(gameobject.GameObject):
 
     def load_props(self, scene_loader, props):
         super().load_props(scene_loader, props)
-        if props is not None:
-            if 'background_color' in props:
-                self.background_color = utilities.parse_color(props['background_color'])
-            if 'background' in props:
-                self.background = scene_loader.create_node('background', props['background'])
-                self.add_child(self.background)
+        if 'background_color' in props:
+            self.background_color = utilities.parse_color(props['background_color'])
+        if 'background' in props:
+            self.background = scene_loader.create_node('background', props['background'])
+            self.add_child(self.background)
 
     def add_child(self, obj):
         self.game_objects.append(obj)
@@ -97,6 +96,7 @@ class GroupObject(gameobject.GameObject):
             if self.background:
                 self.background.draw(surface)
             else:
+                # print(f"\tBGCOLOR {self.background_color}")
                 surface.fill(self.background_color, self.bounds)
         # for obj in self.game_objects:
         for i in range(0, len(self.game_objects)):

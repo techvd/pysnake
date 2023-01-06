@@ -12,7 +12,7 @@ from lib import debugscene
 
 
 FORMAT_STRING = '%(asctime)s %(message)s'
-LEVEL_FILE = 'assets/levels/level04.json'
+LEVEL_FILE = 'assets/levels/level05.json'
 
 
 class Game:
@@ -133,6 +133,8 @@ class Game:
                 self.event_manager.handle_event(event)
             if not self.state.paused:
                 self.scene.update(dt)
+            # print("\n\nFRAME BEGIN")
             self.scene.draw(self.screen)
+            # print("FRAME END")
             pygame.display.flip()
             self.scene.finish_safe_remove()

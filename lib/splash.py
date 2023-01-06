@@ -1,8 +1,8 @@
 import logging
-from lib import tilescene
+from lib import basescene
 
 
-class SplashScene(tilescene.TileScene):
+class SplashScene(basescene.BaseScene):
     def __init__(self, game):
         super().__init__(game)
         logging.debug("SPLASH Created!")
