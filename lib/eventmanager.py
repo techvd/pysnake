@@ -15,6 +15,8 @@ GAMEEVENT_TOUCH_OBJECT = 21
 
 GAMEEVENT_GAME_OVER = 101
 
+GAMEEVENT_DEBUG = 201
+
 
 class EventManager:
     def __init__(self, game):

@@ -24,7 +24,7 @@ class GameObject:
         self.frames = 0
 
     def dump(self):
-        logging.debug(f"{self.name} at {self.position} size {self.size} bounds {self.bounds}")
+        print(f"{self.name} at {self.position} size {self.size} bounds {self.bounds}")
 
     def get_id(self):
         return self.object_id
@@ -98,6 +98,11 @@ class GameObject:
         self.bounds = pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
 
     def is_within(self, x, y):
+        # print(f"{self.name} is_within before {x},{y}")
+        if self.parent:
+            x -= self.parent.position[0]
+            y -= self.parent.position[1]
+        # print(f"{self.name} is_within after {x},{y}")
         return self.bounds.collidepoint(x, y)
 
     def get_object_at(self, x, y):
@@ -113,7 +118,7 @@ class GameObject:
     def update(self, dt):
         pass
 
-    def draw(self, surface):
+    def draw(self, surface, state):
         if not self.visible:
             return
         # print(f"\t{self.name} DRAW")

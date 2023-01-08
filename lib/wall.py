@@ -15,5 +15,5 @@ class Wall(gameobject.GameObject):
         super().load_props(scene_loader, props)
         self.color = utilities.parse_color(props['color'])
 
-    def draw(self, surface):
+    def draw(self, surface, state):
         pygame.draw.rect(surface, self.color, self.bounds)

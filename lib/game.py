@@ -11,8 +11,10 @@ from lib import sceneloader
 from lib import debugscene
 
 
-FORMAT_STRING = '%(asctime)s %(message)s'
-LEVEL_FILE = 'assets/levels/level05.json'
+FORMAT_STRING = '%(asctime)s %(levelname)s %(message)s'
+STARTUP_SCREEN = 'assets/screens/splash01.json'
+STARTUP_LEVEL = 'assets/levels/level05.json'
+GAMEOVER_SCREEN = 'assets/screens/gameover.json'
 
 
 class Game:
@@ -34,17 +36,22 @@ class Game:
         self.state = gamestate.GameState(self)
         self.handler = gameeventhandler.GameEventHandler(self)
         self.loader = sceneloader.SceneLoader(self)
-        self.scene = self.loader.load_scene('assets/screens/splash01.json')
-        self.scene.dump()
+        if self.arguments.scene:
+            self.scene = self.loader.load_scene(self.arguments.scene)
+        else:
+            self.scene = self.loader.load_scene(STARTUP_SCREEN)
         # self.scene = debugscene.DebugScene(self)
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_SPLASH
         self.event_manager.schedule(1000, partial(self.continueSplash))
+        self.debugFrame = False
+        self.event_manager.add_event_listener(eventmanager.GAMEEVENT_DEBUG, self)
 
     def process_args(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--version", action="store_true", help="Display version")
         parser.add_argument("--debug", action="store_true", help="Turn on debug mode")
+        parser.add_argument("--scene", help="Scene to fire up on start")
         return parser.parse_args()
 
     def get_event_manager(self):
@@ -78,7 +85,7 @@ class Game:
     def continueSplash(self):
         logging.info("Continue from Splash...")
         self.scene.end_scene()
-        self.scene = self.loader.load_scene(LEVEL_FILE)
+        self.scene = self.loader.load_scene(STARTUP_LEVEL)
         self.state.scene = self.scene
         self.state.state = gamestate.STATE_GAME
         self.event_manager.add_event_listener(eventmanager.GAMEEVENT_GAME_OVER, self)
@@ -98,12 +105,14 @@ class Game:
         logging.debug(f"GAME onEvent {event}")
         if event.code == eventmanager.GAMEEVENT_GAME_OVER:
             self.scene.end_scene()
-            self.scene = self.loader.load_scene('assets/screens/gameover.json')
+            self.scene = self.loader.load_scene(GAMEOVER_SCREEN)
             self.state.scene = self.scene
             self.state.state = gamestate.STATE_GAMEOVER
             # XXX setup callback
-            self.scene.get_gui_element("btn_quit").on_press_handler = partial(self.on_gameover_quit_pressed)
-            self.scene.get_gui_element("btn_retry").on_press_handler = partial(self.on_gameover_retry_pressed)
+            self.scene.get_gui_element("buttons", "btn_quit").on_press_handler = partial(self.on_gameover_quit_pressed)
+            self.scene.get_gui_element("buttons", "btn_retry").on_press_handler = partial(self.on_gameover_retry_pressed)
+        elif event.code == eventmanager.GAMEEVENT_DEBUG:
+            self.debugFrame = True
 
     def on_gameover_quit_pressed(self, obj):
         logging.info("Quit Button is Pressed on gameover scene!")
@@ -134,7 +143,11 @@ class Game:
             if not self.state.paused:
                 self.scene.update(dt)
             # print("\n\nFRAME BEGIN")
-            self.scene.draw(self.screen)
+            self.scene.draw(self.screen,
+                            {"debugFrame": self.debugFrame})
             # print("FRAME END")
             pygame.display.flip()
+            if self.debugFrame:
+                self.scene.dump()
+                self.debugFrame = False
             self.scene.finish_safe_remove()

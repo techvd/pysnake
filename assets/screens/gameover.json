@@ -7,47 +7,61 @@
     "size": "720, 1280",
     "image": "gameover"
   },
-  "panel": {
-    "position": "0, 0",
-    "size": "720, 1280",
-    "elements": [
-      {
-        "name": "text_score",
-        "type": "text",
-        "weight": 48,
-        "color": "0, 0, 192",
-        "anchor": "360, 450"
-      },
-      {
-        "name": "text_bonus",
-        "type": "text",
-        "weight": 48,
-        "color": "0, 0, 192",
-        "anchor": "360, 550"
-      },
-      {
-        "name": "text_total",
-        "type": "text",
-        "weight": 60,
-        "color": "0, 192, 0",
-        "anchor": "360, 650"
-      },
-      {
-        "name": "btn_retry",
-        "id": 1001,
-        "type": "button",
-        "position": "280, 850",
-        "size": "160, 80",
-        "image": "retry"
-      },
-      {
+  "elements": [
+    {
+      "name": "score",
+      "type": "panel",
+      "position": "0, 0",
+      "size": "720, 800",
+      "background_color": "40, 40, 220, 64",
+      "elements": [
+        {
+          "name": "text_score",
+          "type": "text",
+          "weight": 48,
+          "color": "0, 0, 192",
+          "anchor": "360, 450"
+        },
+        {
+          "name": "text_bonus",
+          "type": "text",
+          "weight": 48,
+          "color": "0, 0, 192",
+          "anchor": "360, 550"
+        },
+        {
+          "name": "text_total",
+          "type": "text",
+          "weight": 60,
+          "color": "0, 192, 0",
+          "anchor": "360, 650"
+        }
+      ]
+    },
+    {
+      "name": "buttons",
+      "type": "panel",
+      "position": "0, 840",
+      "size": "720, 440",
+      "background_color": "40, 40, 220, 64",
+      "elements" : [
+        {
+          "name": "btn_retry",
+          "id": 1001,
+          "type": "button",
+          "position": "280, 100",
+          "size": "160, 80",
+          "image": "retry"
+        },
+        {
         "name": "btn_quit",
         "id": 1002,
         "type": "button",
-        "position": "280, 1000",
+        "position": "280, 250",
         "size": "160, 80",
         "image": "quit"
-      }
-    ]
-  }
+        }
+      ]
+    }
+  ]
 }

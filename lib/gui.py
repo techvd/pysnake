@@ -17,7 +17,6 @@ class GUIButton(staticobject.StaticObject):
 
     def handle_event(self, event, **kwargs):
         logging.debug("Button handle_event")
-        self.dump()
         if event.code == eventmanager.GAMEEVENT_TOUCH_OBJECT:
             logging.debug(f"Sender: {event.object.get_id()}, Me: {self.get_id()}")
             if event.object.get_id() == self.get_id():
@@ -34,29 +33,22 @@ class GUIPanel(groupobject.GroupObject):
         self.name = "PANEL"
         self.surface = None
         self.height = 0
-        self.elementMap = {}
 
     def load_props(self, scene_loader, props):
         super().load_props(scene_loader, props)
-        for element in props["elements"]:
-            key = element["name"]
-            _type = element["type"]
-            obj = scene_loader.create_node(_type, element)
-            if obj is not None:
-                self.elementMap[key] = obj
-                self.add_child(obj)
         # print(f"***panel making surface of {self.size}")
         self.surface = pygame.Surface(self.size, pygame.SRCALPHA).convert_alpha()
 
     def getAnchor(self):
         return self.anchor
 
-    def getElement(self, name):
-        return self.elementMap[name]
-
-    def draw(self, surface):
-        super().draw(self.surface)
+    def draw(self, surface, state):
+        super().draw(self.surface, state)
+        if state['debugFrame']:
+            print(f"Panel blitting at {self.position}")
         surface.blit(self.surface, self.position) # , special_flags=pygame.BLEND_ADD)
+        if state['debugFrame']:
+            pygame.image.save(self.surface, "frame.png")
 
 
 class GUIManager(groupobject.GroupObject):

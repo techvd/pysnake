@@ -25,16 +25,14 @@ class Snake(gameobject.GameObject):
         if 'color' in props:
             self.color = utilities.parse_color(props['color'])
         self.starting_position = self.position
-        tile = props['tile_position']
-        self.tiles.append(tile)
-        self.tiles.append([tile[0]+1, tile[1]])
+        self.tiles.append(pygame.Rect(self.position, self.size))
 
-    def draw(self, surface):
+    def draw(self, surface, state):
         # pygame.draw.rect(surface, self.color, self.bounds)
         for i in range(len(self.tiles)):
             tile = self.tiles[i]
-            bounds = self.game.get_scene().get_tile_bounds(tile[0], tile[1])
-            pygame.draw.rect(surface, self.color, bounds)
+            # bounds = self.game.get_scene().get_tile_bounds(tile[0], tile[1])
+            pygame.draw.rect(surface, self.color, tile)
 
     def set_direction(self, direction):
         self.direction = direction
